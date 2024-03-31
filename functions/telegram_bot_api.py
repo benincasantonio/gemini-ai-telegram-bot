@@ -26,7 +26,8 @@ def webhook():
         return {
             "method": "sendMessage",
             "chat_id": body['message']['chat']['id'],
-            "text": content.text
+            "text": content.text,
+            "parse_mode": "MarkdownV2"
         }
     except Exception as error:
         logger.error(f"Error occured in webhook: {error}")
