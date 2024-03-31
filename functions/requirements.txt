@@ -1,0 +1,6 @@
+firebase_functions~=0.2.0
+flask~=3.0.2
+google-generativeai~=0.4.1
+functions-framework~=3.5.0
+python-dotenv~=1.0.1
+python-telegram-bot~=21.0.1
