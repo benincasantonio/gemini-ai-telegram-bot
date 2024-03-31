@@ -1,16 +1,13 @@
 from flask import Flask, request
-import google.generativeai as gen_ai
 from firebase_functions import logger
 from dotenv import load_dotenv
-from os import getenv
+from gemini import Gemini
 
 load_dotenv()
 
 app = Flask(__name__)
 
-gemini_api_key = getenv('GEMINI_API_KEY')
-
-gen_ai.configure(api_key=gemini_api_key)
+gemini = Gemini()
 
 
 @app.get('/')
@@ -24,11 +21,7 @@ def webhook():
         body = request.get_json()
         logger.info(f"Body: {body}")
 
-        model = gen_ai.GenerativeModel(
-            model_name="gemini-pro"
-        )
-
-        content = model.generate_content(body['message']['text'])
+        content = gemini.generate_content(body['message']['text'])
 
         return {
             "method": "sendMessage",
