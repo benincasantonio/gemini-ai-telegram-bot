@@ -1,6 +1,9 @@
 from firebase_functions import https_fn
 from firebase_admin import initialize_app
-from telegram_bot_api import app
+from src.telegram_bot_api import app
+from dotenv import load_dotenv
+
+load_dotenv()
 
 initialize_app()
 

@@ -4,3 +4,7 @@ google-generativeai~=0.4.1
 functions-framework~=3.5.0
 python-dotenv~=1.0.1
 python-telegram-bot~=21.0.1
+ipython~=8.23.0
+md2tgmd~=0.1.2
+vertexai~=1.46.0
+pytz~=2024.1
