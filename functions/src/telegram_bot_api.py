@@ -2,11 +2,15 @@ from flask import Flask, request
 from firebase_functions import logger
 from .gemini import Gemini
 from md2tgmd import escape
-
+from telegram.ext import ApplicationBuilder
+from telegram import Update
+from os import getenv
 
 app = Flask(__name__)
 
 gemini = Gemini()
+
+telegram_app = ApplicationBuilder().token(getenv('TELEGRAM_BOT_TOKEN')).build()
 
 
 @app.get('/')
@@ -19,40 +23,23 @@ def webhook():
     chat_id = None
     try:
         body = request.get_json()
-        logger.info(f"Body: {body}")
 
-        if 'message' in body:
-            chat_id = body['message']['chat']['id']
-            logger.info(f"Chat ID: {chat_id}")
-        elif 'edited_message' in body:
-            chat_id = body['edited_message']['chat']['id']
-            logger.info(f"Chat ID: {chat_id}")
-        else:
-            return {
-                "method": "sendMessage",
-                "chat_id": chat_id,
-                "text": 'Sorry, I am not able to generate content for you right now. Please try again later.'
-            }
+        update = Update.de_json(body, telegram_app.bot)
 
-        if body['message']['text'] == '/start':
+        chat_id = update.message.chat_id
+
+        if update.edited_message:
+            return 'OK'
+
+        if update.message.text == '/start':
             return {
                 "method": "sendMessage",
                 "chat_id": chat_id,
                 "text": 'Welcome!'
             }
 
-        if 'message' in body:
-            message_text = body['message']['text']
-        elif 'edited_message' in body:
-            message_text = body['edited_message']['text']
-        else:
-            return {
-                "method": "sendMessage",
-                "chat_id": chat_id,
-                "text": 'Sorry, I am not able to generate content for you right now. Please try again later.'
-            }
         chat = gemini.get_model().start_chat()
-        text = gemini.send_message(message_text, chat)
+        text = gemini.send_message(update.message.text, chat)
 
         return {
             "method": "sendMessage",
