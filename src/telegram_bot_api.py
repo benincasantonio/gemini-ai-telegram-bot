@@ -24,7 +24,7 @@ def hello_world():
 
 
 @app.post('/webhook')
-def webhook():
+async def webhook():
     chat_id = None
     try:
         body = request.get_json()
@@ -50,7 +50,7 @@ def webhook():
             print('Generating images')
             file_id = update.message.photo[-1].file_id
             print(f"Images file id is {file_id}")
-            file = telegram_app.bot.get_file(file_id)
+            file = await telegram_app.bot.get_file(file_id)
             print("Image file found")
             bytesIO = BytesIO(file.download_as_bytearray())
             print("Images file as bytes")
