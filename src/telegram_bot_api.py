@@ -4,6 +4,10 @@ from md2tgmd import escape
 from telegram.ext import ApplicationBuilder
 from telegram import Update
 from os import getenv
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 app = Flask(__name__)
 
