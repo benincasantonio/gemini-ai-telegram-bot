@@ -1,5 +1,4 @@
 from flask import Flask, request
-from firebase_functions import logger
 from .gemini import Gemini
 from md2tgmd import escape
 from telegram.ext import ApplicationBuilder
