@@ -1,4 +1,5 @@
 {
+    "version": 2,
     "builds": [
       {
         "src": "src/telegram_bot_api.py",
@@ -11,5 +12,8 @@
         "src": "/(.*)",
         "dest": "src/telegram_bot_api.py"
       }
-    ]
+    ],
+    "engines": {
+      "node": "18.x"
+    }
   }
