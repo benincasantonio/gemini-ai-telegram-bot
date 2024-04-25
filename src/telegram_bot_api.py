@@ -50,5 +50,5 @@ def webhook():
         return {
             "method": "sendMessage",
             "chat_id": chat_id,
-            "text": 'Sorry, I am not able to generate content for you right now. Please try again later.'
+            "text": 'Sorry, I am not able to generate content for you right now. Please try again later. ' + str(error)
         }
