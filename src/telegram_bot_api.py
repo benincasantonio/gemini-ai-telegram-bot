@@ -53,7 +53,7 @@ async def webhook():
             file = await telegram_app.bot.get_file(file_id)
             print("Image file found")
             bytes_array = await file.download_as_bytearray()
-            bytesIO = BytesIO()
+            bytesIO = BytesIO(bytes_array)
             print("Images file as bytes")
             image = Image.open(bytesIO)
             print("Image opened")
