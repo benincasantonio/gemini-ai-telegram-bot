@@ -1,7 +1,6 @@
 from os import getenv
 
 import google.generativeai as gen_ai
-from firebase_functions.logger import log
 from .plugin_manager import PluginManager
 
 
@@ -30,16 +29,11 @@ class Gemini:
 
         function_call = function_request.candidates[0].content.parts[0].function_call
 
-        log(f"function call: {function_call}")
-
         if not function_call:
             chat.rewind()
             response = chat.send_message(prompt)
-            log(f"Response: {response.text}")
             return response.text
 
         function_response = self.__plugin_manager.get_function_response(function_call, chat)
-
-        log(f"Function response: {function_response}")
 
         return function_response.parts[0].text

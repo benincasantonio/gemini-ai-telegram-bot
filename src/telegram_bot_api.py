@@ -47,7 +47,6 @@ def webhook():
             "parse_mode": "MarkdownV2"
         }
     except Exception as error:
-        logger.error(f"Error occured in webhook: {error}")
         return {
             "method": "sendMessage",
             "chat_id": chat_id,
