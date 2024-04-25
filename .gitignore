@@ -74,3 +74,5 @@ functions/ui-debug.log
 
 #pycache
 __pycache__/
+
+venv
