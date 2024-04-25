@@ -4,3 +4,4 @@ python-dotenv~=1.0.1
 python-telegram-bot~=21.0.1
 md2tgmd~=0.1.2
 pytz~=2024.1
+pillow~=10.3.0

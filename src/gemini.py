@@ -1,7 +1,9 @@
 from os import getenv
 
+import PIL.Image
 import google.generativeai as gen_ai
 from .plugin_manager import PluginManager
+import PIL as PIL
 
 
 class Gemini:
@@ -15,7 +17,11 @@ class Gemini:
         gen_ai.configure(api_key=getenv('GEMINI_API_KEY'))
         self.__pro_model = gen_ai.GenerativeModel(
             model_name="gemini-pro",
-
+            generation_config=self.__generation_config
+        )
+        self.__pro_model_vision = gen_ai.GenerativeModel(
+            model_name="gemini-pro-vision",
+            generation_config=self.__generation_config
         )
 
     def get_model(self):
@@ -37,3 +43,8 @@ class Gemini:
         function_response = self.__plugin_manager.get_function_response(function_call, chat)
 
         return function_response.parts[0].text
+    
+
+    def send_image(self, prompt: str, image: PIL.Image):
+        response = self.__pro_model_vision.generate_content(prompt, image)
+        return response.text
