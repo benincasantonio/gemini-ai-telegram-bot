@@ -47,16 +47,21 @@ def webhook():
 
         
         if update.message.photo:
+            print('Generating images')
             file_id = update.message.photo[-1].file_id
+            print(f"Images file id is {file_id}")
             file = telegram_app.bot.get_file(file_id)
+            print("Image file found")
             bytesIO = BytesIO(file.download_as_bytearray())
-
+            print("Images file as bytes")
             image = Image.open(bytesIO)
+            print("Image opened")
 
             prompt = 'Describe the image'
 
             if update.message.caption:
                 prompt = update.message.caption
+            print("Prompt is ", prompt)
 
             text = gemini.send_image(prompt, image)
 
@@ -77,6 +82,7 @@ def webhook():
             "parse_mode": "MarkdownV2"
         }
     except Exception as error:
+        print(f"Error Occurred: {error}")
         return {
             "method": "sendMessage",
             "chat_id": chat_id,
