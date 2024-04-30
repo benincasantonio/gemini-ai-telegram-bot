@@ -25,6 +25,6 @@ This section tracks the progress of the project. The following features are plan
 - [ ] Implement gemini vision api, to recognize images
 - [ ] Chat history mode
 - [ ] Implement other plugins (e.g. weather, stock, etc.)
-- [ ] Setup Continuous Delivery
+- [x] Setup Continuous Delivery
 - [ ] Setup the new Gemini 1.5 models
 - [ ] Http certificate to secure the webhook endpoint
