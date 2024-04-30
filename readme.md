@@ -5,12 +5,8 @@ This project is a chatbot application that uses Google's Generative AI (Gemini) 
 
 
 ## Installation
-1. Clone the repository
-2. Install the required packages using `pip install -r requirements.txt`
-3. Set up the Telegram bot using the BotFather on Telegram
-4. Create a `.env` file in the 'functions' directory and add the required environment variables. You can check the environment variables section below for more details.
-5. Deploy the firebase functions using `firebase deploy --only functions`. More details on firebase documentation [here](https://firebase.google.com/docs/functions/get-started?gen=2nd#python_1)
-6. Bind the firebase function URL by setting a telegram webhook using the following URL: `https://<your-project-id>.firebaseapp.com/webhook`. More details on telegram documentation [here](https://core.telegram.org/bots/api#setwebhook)
+1. Set up the Telegram bot using the BotFather on Telegram
+2. Deploy on vercel with just a click: [![Deploy with Vercel](https://vercel.com/button)](https://github.com/benincasantonio/gemini-ai-telegram-bot)
 
 ## Environment Variables
 The following environment variables are required for the application to run:
@@ -26,7 +22,7 @@ This section tracks the progress of the project. The following features are plan
 - [x] Implement Gemini model
 - [x] Implement a basic plugin
 - [x] Implement DateTimePlugin
-- [ ] Implement gemini vision api, to recognize images
+- [x] Implement gemini vision api, to recognize images
 - [ ] Chat history mode
 - [ ] Implement other plugins (e.g. weather, stock, etc.)
 - [ ] Setup Continuous Delivery
