@@ -37,13 +37,8 @@ async def webhook():
             return 'OK'
 
         if update.message.text == '/start':
-            return {
-                "method": "sendMessage",
-                "chat_id": chat_id,
-                "text": 'Welcome!'
-            }
-
-        
+            telegram_app.bot.send_message(chat_id=chat_id, text="Welcome to Gemini Bot. Send me a message or an image to get started.")
+            return 'OK'     
 
         
         if update.message.photo:
