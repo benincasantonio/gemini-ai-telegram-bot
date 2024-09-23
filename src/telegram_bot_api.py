@@ -68,6 +68,7 @@ async def webhook():
             text = gemini.send_message(update.message.text, chat)
         
         await send_message(chat_id, text)
+        return 'OK'
     except Exception as error:
         print(f"Error Occurred: {error}")
         return {
