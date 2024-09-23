@@ -45,6 +45,7 @@ class WeatherPlugin:
     @staticmethod
     def get_weather(city: str, latitude: float, longitude: float) -> str:
         mgr = owm.weather_manager()
+        print('WEATHER: ', city, latitude, longitude)
         weather = mgr.weather_at_coords(latitude, longitude).weather
         return f"The weather in {city} is {weather.status} with a temperature of {weather.temperature('celsius')['temp']}°C."
     
