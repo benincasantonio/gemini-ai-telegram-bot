@@ -67,7 +67,7 @@ async def webhook():
             chat = gemini.get_model().start_chat()
             text = gemini.send_message(update.message.text, chat)
         
-        send_message_sync(chat_id, text)
+        send_message(chat_id, text)
     except Exception as error:
         print(f"Error Occurred: {error}")
         return {
@@ -78,6 +78,3 @@ async def webhook():
 
 async def send_message(chat_id, text):
     await telegram_app.bot.send_message(chat_id=chat_id, text=escape(text), parse_mode="MarkdownV2")
-
-def send_message_sync(chat_id, text):
-    asyncio.run(send_message(chat_id, text))
