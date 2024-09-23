@@ -1,3 +1,4 @@
+from src.plugins.weather_plugin import WeatherPlugin
 from .plugins.date_time_plugin import DateTimePlugin
 import google.ai.generativelanguage as glm
 from google.generativeai import ChatSession
@@ -6,6 +7,7 @@ from google.generativeai import ChatSession
 class PluginManager:
     def __init__(self):
         self.__date_time_plugin = DateTimePlugin()
+        self.__weather_plugin = WeatherPlugin()
 
     def get_tools(self):
         return [
@@ -14,7 +16,9 @@ class PluginManager:
 
     def get_function_declarations(self):
         return {
-            "get_date_time": self.__date_time_plugin.get_date_time
+            "get_date_time": self.__date_time_plugin.get_date_time,
+            "get_weather": self.__weather_plugin.get_weather
+
         }
 
     def get_function_response(self, function_call: glm.FunctionCall, chat: ChatSession):
