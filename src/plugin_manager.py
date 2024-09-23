@@ -12,6 +12,7 @@ class PluginManager:
     def get_tools(self):
         return [
             self.__date_time_plugin.get_tool()
+            self.__weather_plugin.get_tool()
         ]
 
     def get_function_declarations(self):
