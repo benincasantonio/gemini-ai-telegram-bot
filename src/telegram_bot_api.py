@@ -37,10 +37,13 @@ async def webhook():
 
         if update.edited_message:
             return 'OK'
+        else:
+            message = await telegram_app.bot.send_message(chat_id=chat_id, text="Processing your request...")
+            message_id = message.message_id
 
         if update.message.text == TelegramBotCommands.START:
             await telegram_app.bot.send_message(chat_id=chat_id, text="Welcome to Gemini Bot. Send me a message or an image to get started.")
-            return 'OK'     
+            return 'OK'
 
         
         if update.message.photo:
@@ -67,7 +70,7 @@ async def webhook():
             chat = gemini.get_model().start_chat()
             text = gemini.send_message(update.message.text, chat)
         
-        await send_message(chat_id, text)
+        await telegram_app.bot.edit_message_text(chat_id= chat_id, text=text, message_id=message_id, parse_mode="MarkdownV2")
         return 'OK'
     except Exception as error:
         print(f"Error Occurred: {error}")
