@@ -7,6 +7,7 @@ from os import getenv
 from dotenv import load_dotenv
 from io import BytesIO
 from PIL import Image
+from enums import TelegramBotCommands
 
 load_dotenv()
 
@@ -36,7 +37,7 @@ async def webhook():
         if update.edited_message:
             return 'OK'
 
-        if update.message.text == '/start':
+        if update.message.text == TelegramBotCommands.START:
             await telegram_app.bot.send_message(chat_id=chat_id, text="Welcome to Gemini Bot. Send me a message or an image to get started.")
             return 'OK'     
 
