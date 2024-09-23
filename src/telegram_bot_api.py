@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from io import BytesIO
 from PIL import Image
 from .enums import TelegramBotCommands
+import asyncio
 
 load_dotenv()
 
@@ -66,7 +67,7 @@ async def webhook():
             chat = gemini.get_model().start_chat()
             text = gemini.send_message(update.message.text, chat)
         
-        await telegram_app.bot.send_message(chat_id=chat_id, text=escape(text), parse_mode="MarkdownV2")
+        send_message_sync(chat_id, text)
     except Exception as error:
         print(f"Error Occurred: {error}")
         return {
@@ -74,3 +75,9 @@ async def webhook():
             "chat_id": chat_id,
             "text": 'Sorry, I am not able to generate content for you right now. Please try again later. '
         }
+
+async def send_message(chat_id, text):
+    await telegram_app.bot.send_message(chat_id=chat_id, text=escape(text), parse_mode="MarkdownV2")
+
+def send_message_sync(chat_id, text):
+    asyncio.run(send_message(chat_id, text))
