@@ -7,7 +7,7 @@ from os import getenv
 from dotenv import load_dotenv
 from io import BytesIO
 from PIL import Image
-from enums import TelegramBotCommands
+from .enums import TelegramBotCommands
 
 load_dotenv()
 
