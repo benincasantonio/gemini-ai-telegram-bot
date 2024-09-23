@@ -1,4 +1,4 @@
-from src.plugins.weather_plugin import WeatherPlugin
+from .plugins.weather_plugin import WeatherPlugin
 from .plugins.date_time_plugin import DateTimePlugin
 import google.ai.generativelanguage as glm
 from google.generativeai import ChatSession
@@ -11,7 +11,7 @@ class PluginManager:
 
     def get_tools(self):
         return [
-            self.__date_time_plugin.get_tool()
+            self.__date_time_plugin.get_tool(),
             self.__weather_plugin.get_tool()
         ]
 
