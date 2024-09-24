@@ -20,8 +20,7 @@ class WeatherPlugin:
                 },
                 "date_time": {
                     "type": "string",
-                    "description": "The datetime timestamp for the weather.",
-                    "format": "date-time"
+                    "description": "The datetime timestamp for the weather."
                 },
                 "unit": {
                     "type": "string",
