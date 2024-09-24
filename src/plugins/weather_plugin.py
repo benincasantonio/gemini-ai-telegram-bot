@@ -9,23 +9,14 @@ owm = OWM(getenv('OWM_API_KEY'))
 class WeatherPlugin: 
     def __init__(self):
         self.name: str = "get_weather"
-        self.description: str = "A plugin that returns the current weather."
-        ## The parameters are, the city name and the latitude and longitude of the city.
+        self.description: str = "A plugin that returns the current weather. "
         self.parameters: dict[str, any] = {
             "type": "object",
             "properties": {
                 "city": {
                     "type": "string",
                     "description": "The city name."
-                },
-                "latitude": {
-                    "type": "number",
-                    "description": "The latitude of the city."
-                },
-                "longitude": {
-                    "type": "number",
-                    "description": "The longitude of the city."
-                }
+                },                
             }
         }
 
@@ -43,10 +34,9 @@ class WeatherPlugin:
     
 
     @staticmethod
-    def get_weather(city: str, latitude: float, longitude: float) -> str:
+    def get_weather(city: str) -> str:
         mgr = owm.weather_manager()
-        print('WEATHER: ', city, latitude, longitude)
-        weather = mgr.weather_at_coords(latitude, longitude).weather
+        weather = mgr.weather_at_place(city).weather
         return f"The weather in {city} is {weather.status} with a temperature of {weather.temperature('celsius')['temp']}°C."
     
 
