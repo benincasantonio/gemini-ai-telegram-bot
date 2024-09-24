@@ -42,8 +42,9 @@ class WeatherPlugin:
             "status": weather.status,
             "temperature": weather.temperature('celsius')['temp'],
             "city": city,
-            "unit": "°C"
-
+            "country": weather.location.country,
+            "unit": "°C",
+            "date": weather.reference_time()
         }
     
 
