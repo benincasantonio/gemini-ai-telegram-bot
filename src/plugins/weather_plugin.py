@@ -18,7 +18,7 @@ class WeatherPlugin:
                     "type": "string",
                     "description": "The city name."
                 },
-                "datetime": {
+                "date_time": {
                     "type": "string",
                     "description": "The datetime timestamp for the weather."
                 },
@@ -44,10 +44,10 @@ class WeatherPlugin:
     
 
     @staticmethod
-    def get_weather(city: str, datetime: str = datetime.now().strftime('%Y-%m-%d'), unit: str = 'celsius') -> str:
+    def get_weather(city: str, date_time: str = datetime.now().strftime('%Y-%m-%d'), unit: str = 'celsius') -> str:
         mgr = owm.weather_manager()
-        print("DATETIME: " + datetime)
-        date = datetime.strptime(datetime, '%Y-%m-%d')
+        print("DATETIME: " + date_time)
+        date = datetime.strptime(date_time, '%Y-%m-%d')
 
         if date.date() == datetime.now().date():
             weather = mgr.weather_at_place(city).weather
