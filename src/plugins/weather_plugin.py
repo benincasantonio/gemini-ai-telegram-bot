@@ -2,6 +2,7 @@ from google.generativeai.types import FunctionDeclaration, Tool
 from pyowm import OWM
 from dotenv import load_dotenv
 from os import getenv
+from datetime import datetime
 
 load_dotenv()
 owm = OWM(getenv('OWM_API_KEY'))
@@ -16,7 +17,16 @@ class WeatherPlugin:
                 "city": {
                     "type": "string",
                     "description": "The city name."
-                },                
+                },
+                "date": {
+                    "type": "string",
+                    "description": "The date."
+                },
+                "unit": {
+                    "type": "string",
+                    "description": "The unit of temperature",
+                    "enum": ["celsius", "fahrenheit"]
+                }
             }
         }
 
@@ -34,16 +44,34 @@ class WeatherPlugin:
     
 
     @staticmethod
-    def get_weather(city: str) -> str:
+    def get_weather(city: str, date: datetime = datetime.now(), unit: str = 'celsius') -> str:
         mgr = owm.weather_manager()
-        weather = mgr.weather_at_place(city).weather
+
+        if date.date() == datetime.now().date():
+            weather = mgr.weather_at_place(city).weather
+        else: 
+            forecast = mgr.forecast_at_place(city, '3h').forecast
+            weather = forecast.get_weather_at(date)
+
+            return {
+                "status": weather.status,
+                "detailed_status": weather.detailed_status,
+                "temperature": weather.temperature(unit)['temp'],
+                "city": city,
+                "unit": "°C",
+                "reference_time": weather.reference_time()
+            }
+        
+
         return {
             "status": weather.status,
             "detailed_status": weather.detailed_status,
-            "temperature": weather.temperature('celsius')['temp'],
+            "temperature": weather.temperature(unit)['temp'],
             "city": city,
             "unit": "°C",
             "reference_time": weather.reference_time()
         }
+        
+        
     
 
