@@ -62,18 +62,9 @@ class WeatherPlugin:
                 "detailed_status": weather.detailed_status,
                 "temperature": weather.temperature(unit)['temp'],
                 "city": city,
-                "unit": "°C",
+                "unit": "°C" if unit == 'celsius' else "°F",
                 "reference_time": weather.reference_time()
             })
-
-            return {
-                "status": weather.status,
-                "detailed_status": weather.detailed_status,
-                "temperature": weather.temperature(unit)['temp'],
-                "city": city,
-                "unit": "°C",
-                "reference_time": datetime.fromtimestamp(weather.reference_time()).strftime('%d-%m-%Y %H:%M:%S')
-            }
         
 
         return {
@@ -81,7 +72,7 @@ class WeatherPlugin:
             "detailed_status": weather.detailed_status,
             "temperature": weather.temperature(unit)['temp'],
             "city": city,
-            "unit": "°C",
+            "unit": "°C" if unit == 'celsius' else "°F",
             "reference_time": datetime.fromtimestamp(weather.reference_time()).strftime('%d-%m-%Y %H:%M:%S')
         }
         
