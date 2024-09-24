@@ -29,6 +29,8 @@ class PluginManager:
             args = {key: value for key, value in function_call.args.items()}
             result = function_declarations[function_call.name](**args)
 
+            print('RESULT: ' + str(result))
+
             function_response = chat.send_message(
                 content=[
                     glm.Part(

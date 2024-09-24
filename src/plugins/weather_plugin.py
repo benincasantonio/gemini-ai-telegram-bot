@@ -54,17 +54,6 @@ class WeatherPlugin:
         else: 
             forecast = mgr.forecast_at_place(city, '3h')
             weather = forecast.get_weather_at(date)
-
-            print('WEATHER: ' + str(weather))
-
-            print({
-                "status": weather.status,
-                "detailed_status": weather.detailed_status,
-                "temperature": weather.temperature(unit)['temp'],
-                "city": city,
-                "unit": "°C" if unit == 'celsius' else "°F",
-                "reference_time": weather.reference_time()
-            })
         
 
         return {
