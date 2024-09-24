@@ -72,7 +72,7 @@ class WeatherPlugin:
                 "temperature": weather.temperature(unit)['temp'],
                 "city": city,
                 "unit": "°C",
-                "reference_time": weather.reference_time()
+                "reference_time": datetime.fromtimestamp(weather.reference_time()).strftime('%d-%m-%Y %H:%M:%S')
             }
         
 
@@ -82,7 +82,7 @@ class WeatherPlugin:
             "temperature": weather.temperature(unit)['temp'],
             "city": city,
             "unit": "°C",
-            "reference_time": weather.reference_time()
+            "reference_time": datetime.fromtimestamp(weather.reference_time()).strftime('%d-%m-%Y %H:%M:%S')
         }
         
         
