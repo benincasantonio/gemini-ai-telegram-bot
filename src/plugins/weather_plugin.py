@@ -62,7 +62,7 @@ class WeatherPlugin:
             "temperature": weather.temperature(unit)['temp'],
             "city": city,
             "unit": "°C" if unit == 'celsius' else "°F",
-            "reference_time": datetime.fromtimestamp(weather.reference_time()).strftime('%d-%m-%Y %H:%M:%S')
+            "date": datetime.fromtimestamp(weather.reference_time()).strftime('%d-%m-%Y %H:%M:%S')
         }
         
         
