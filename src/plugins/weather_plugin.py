@@ -44,8 +44,10 @@ class WeatherPlugin:
     
 
     @staticmethod
-    def get_weather(city: str, date: datetime = datetime.now(), unit: str = 'celsius') -> str:
+    def get_weather(city: str, date: str = datetime.now().strftime(), unit: str = 'celsius') -> str:
         mgr = owm.weather_manager()
+        
+        date = datetime.strptime(date, '%Y-%m-%d')
 
         if date.date() == datetime.now().date():
             weather = mgr.weather_at_place(city).weather
