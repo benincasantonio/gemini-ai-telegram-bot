@@ -57,6 +57,15 @@ class WeatherPlugin:
 
             print('WEATHER: ' + str(weather))
 
+            print({
+                "status": weather.status,
+                "detailed_status": weather.detailed_status,
+                "temperature": weather.temperature(unit)['temp'],
+                "city": city,
+                "unit": "°C",
+                "reference_time": weather.reference_time()
+            })
+
             return {
                 "status": weather.status,
                 "detailed_status": weather.detailed_status,
