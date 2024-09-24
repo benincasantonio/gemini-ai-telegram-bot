@@ -52,7 +52,7 @@ class WeatherPlugin:
         if date.date() == datetime.now().date():
             weather = mgr.weather_at_place(city).weather
         else: 
-            forecast = mgr.forecast_at_place(city, 'daily')
+            forecast = mgr.forecast_at_place(city, '3h')
             weather = forecast.get_weather_at(date)
 
             return {
