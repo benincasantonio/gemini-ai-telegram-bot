@@ -39,7 +39,7 @@ class PluginManager:
                     )
                 ]
             )
-
+            print('FUNCTION RESPONSE: ' + str(function_response))
             return function_response
         else:
             return None
