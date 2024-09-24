@@ -55,6 +55,8 @@ class WeatherPlugin:
             forecast = mgr.forecast_at_place(city, '3h')
             weather = forecast.get_weather_at(date)
 
+            print('WEATHER: ' + str(weather))
+
             return {
                 "status": weather.status,
                 "detailed_status": weather.detailed_status,
