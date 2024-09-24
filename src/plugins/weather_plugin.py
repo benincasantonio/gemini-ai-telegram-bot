@@ -38,11 +38,11 @@ class WeatherPlugin:
         mgr = owm.weather_manager()
         weather = mgr.weather_at_place(city).weather
         print( f"The weather in {city} is {weather.status} with a temperature of {weather.temperature('celsius')['temp']}°C.")
+        print(weather)
         return {
             "status": weather.status,
             "temperature": weather.temperature('celsius')['temp'],
             "city": city,
-            "country": weather.location.country,
             "unit": "°C",
             "date": weather.reference_time()
         }
