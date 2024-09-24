@@ -41,10 +41,11 @@ class WeatherPlugin:
         print(weather)
         return {
             "status": weather.status,
+            "detailed_status": weather.detailed_status,
             "temperature": weather.temperature('celsius')['temp'],
             "city": city,
             "unit": "°C",
-            "date": weather.reference_time()
+            "reference_time": weather.reference_time()
         }
     
 
