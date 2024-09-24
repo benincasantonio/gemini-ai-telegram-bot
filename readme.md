@@ -15,6 +15,7 @@ The following environment variables are required for the application to run:
    |----------------------|-------------------------------------------|---------------|
    | `GEMINI_API_KEY`     | Your Gemini API key                       | None          |
    | `TELEGRAM_BOT_TOKEN` | Your Telegram Bot token                   | None          |
+   | `OWM_API_KEY`        | Your [Open Weather Map](https://openweathermap.org/api) API Key             | None          |
    
 ## Project Progress
 This section tracks the progress of the project. The following features are planned or have been implemented:
@@ -24,7 +25,6 @@ This section tracks the progress of the project. The following features are plan
 - [x] Implement DateTimePlugin
 - [x] Implement gemini vision api, to recognize images
 - [ ] Chat history mode
-- [ ] Implement other plugins (e.g. weather, stock, etc.)
+- [x] Implement other plugins (e.g. weather, stock, etc.)
 - [x] Setup Continuous Delivery
-- [ ] Setup the new Gemini 1.5 models
 - [ ] Http certificate to secure the webhook endpoint
