@@ -10,7 +10,7 @@ owm = OWM(getenv('OWM_API_KEY'))
 class WeatherPlugin: 
     def __init__(self):
         self.name: str = "get_weather"
-        self.description: str = "A plugin that returns the current weather. "
+        self.description: str = "A plugin that returns the current weather or the weather forecast for other days."
         self.parameters: dict[str, any] = {
             "type": "object",
             "properties": {
