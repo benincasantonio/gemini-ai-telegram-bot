@@ -52,12 +52,15 @@ class WeatherPlugin:
 
         parsed_date = dateparser.parse(date_time)
 
+        if(parsed_date == None):
+            return "Invalid date and time format. Please enter a valid date and time format."
+
         date = parsed_date.strftime('%d-%m-%Y %H:%M:%S')
 
         
         print("DATETIME: " + date)
 
-        if date.date() == datetime.now().date():
+        if parsed_date.date() == datetime.now().date():
             weather = mgr.weather_at_place(city).weather
         else: 
             forecast = mgr.forecast_at_place(city, '3h')
