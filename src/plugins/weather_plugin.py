@@ -10,7 +10,7 @@ owm = OWM(getenv('OWM_API_KEY'))
 class WeatherPlugin: 
     def __init__(self):
         self.name: str = "get_weather"
-        self.description: str = "A plugin that returns the current weather or the weather forecast for other days."
+        self.description: str = "Get the weather of a city at a particular date and time. If the date is today, the current weather will be returned. Otherwise, the weather at the specified date and time will be returned. If the user does not specify a date and time, the current date and time will be used. If the user types a date like 'tomorrow' or 'in 2 days', you should convert it to the appropriate date. If the user does not specify a unit, the temperature will be returned in Celsius. If the user specifies a unit, the temperature will be returned in that unit."
         self.parameters: dict[str, any] = {
             "type": "object",
             "properties": {
