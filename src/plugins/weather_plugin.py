@@ -55,7 +55,7 @@ class WeatherPlugin:
         if(parsed_date == None):
             return "Invalid date and time format. Please enter a valid date and time format."
 
-        date = parsed_date.strftime('%d-%m-%Y %H:%M:%S')
+        date = parsed_date.strftime('%Y-%m-%d %H:%M:%S')
 
         
         print("DATETIME: " + date)
@@ -64,7 +64,8 @@ class WeatherPlugin:
             weather = mgr.weather_at_place(city).weather
         else: 
             forecast = mgr.forecast_at_place(city, '3h')
-            weather = forecast.get_weather_at(date.format('%Y-%m-%d %H:%M:%S'))
+
+            weather = forecast.get_weather_at(date)
         
 
         return {
