@@ -16,11 +16,11 @@ class Gemini:
     def __init__(self):
         gen_ai.configure(api_key=getenv('GEMINI_API_KEY'))
         self.__pro_model = gen_ai.GenerativeModel(
-            model_name="gemini-1.5-pro-002",
+            model_name="gemini-1.5-flash",
             generation_config=self.__generation_config
         )
         self.__pro_model_vision = gen_ai.GenerativeModel(
-            model_name="gemini-1.5-pro-002",
+            model_name="gemini-1.5-flash",
             generation_config=self.__generation_config
         )
 
