@@ -64,7 +64,7 @@ class WeatherPlugin:
             weather = mgr.weather_at_place(city).weather
         else: 
             forecast = mgr.forecast_at_place(city, '3h')
-            weather = forecast.get_weather_at(date)
+            weather = forecast.get_weather_at(date.format('%d-%m-%Y %H:%M:%S'))
         
 
         return {
