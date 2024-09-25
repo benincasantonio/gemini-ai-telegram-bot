@@ -3,6 +3,7 @@ from pyowm import OWM
 from dotenv import load_dotenv
 from os import getenv
 from datetime import datetime
+import dateparser
 
 load_dotenv()
 owm = OWM(getenv('OWM_API_KEY'))
@@ -46,8 +47,15 @@ class WeatherPlugin:
     @staticmethod
     def get_weather(city: str, date_time: str = datetime.now().strftime('%d-%m-%Y'), unit: str = 'celsius') -> str:
         mgr = owm.weather_manager()
-        print("DATETIME: " + date_time)
-        date = datetime.strptime(date_time, '%d-%m-%Y')
+
+        print("DATE: " + date_time)
+
+        parsed_date = dateparser.parse(date_time)
+
+        date = parsed_date.strftime('%d-%m-%Y %H:%M:%S')
+
+        
+        print("DATETIME: " + date)
 
         if date.date() == datetime.now().date():
             weather = mgr.weather_at_place(city).weather
