@@ -8,7 +8,9 @@ from dotenv import load_dotenv
 from io import BytesIO
 from PIL import Image
 from .enums import TelegramBotCommands
-import asyncio
+import nest_asyncio
+
+nest_asyncio.apply()
 
 
 load_dotenv()
