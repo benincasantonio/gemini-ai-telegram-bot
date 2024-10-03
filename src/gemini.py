@@ -34,6 +34,7 @@ class Gemini:
         function_request = chat.send_message(prompt, tools=self.__plugin_manager.get_tools())
 
         function_call = function_request.candidates[0].content.parts[0].function_call
+        
 
         if not function_call:
             chat.rewind()

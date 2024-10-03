@@ -10,6 +10,7 @@ from PIL import Image
 from .enums import TelegramBotCommands
 import asyncio
 
+
 load_dotenv()
 
 
@@ -34,6 +35,7 @@ async def webhook():
         update = Update.de_json(body, telegram_app.bot)
 
         chat_id = update.message.chat_id
+
 
         if update.edited_message:
             return 'OK'
@@ -82,3 +84,6 @@ async def webhook():
 
 async def send_message(chat_id, text):
     await telegram_app.bot.send_message(chat_id=chat_id, text=escape(text), parse_mode="MarkdownV2")
+
+if __name__ == '__main__':
+    app.run(debug=True)
