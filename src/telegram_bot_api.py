@@ -9,7 +9,6 @@ from io import BytesIO
 from PIL import Image
 from .enums import TelegramBotCommands
 import nest_asyncio
-import asyncio
 
 load_dotenv()
 
@@ -30,13 +29,6 @@ def hello_world():
 async def webhook():
     chat_id = None
     try:
-        loop = asyncio.get_event_loop()
-
-        if loop.is_closed():
-            print('Event Loop closed opening a new event loop')
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-        
         body = request.get_json()
 
         update = Update.de_json(body, telegram_app.bot)
