@@ -11,11 +11,32 @@ from dotenv import load_dotenv
 from io import BytesIO
 from PIL import Image
 from .enums import TelegramBotCommands
+from .config import Config
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+import logging
 
 load_dotenv()
 
 
 app = Flask(__name__)
+app.config.from_object(Config)
+
+db = SQLAlchemy(app)
+
+migrate = Migrate(app, db)
+
+from .models import ChatMessage, ChatSession
+
+
+if not app.debug:
+    stream_handler = logging.StreamHandler()
+    stream_handler.setLevel(logging.INFO)
+    app.logger.addHandler(stream_handler)
+
+app.logger.setLevel(logging.INFO)
+app.logger.info('Application started')
+
 
 
 @app.get('/')
@@ -38,6 +59,13 @@ async def webhook():
         update = Update.de_json(body, telegram_app.bot)
 
         chat_id = update.message.chat_id
+
+        session = db.session.query(ChatSession).filter_by(chat_id=chat_id).first()
+
+        if not session:
+            session = ChatSession(chat_id=chat_id, messages=[])
+            db.session.add(session)
+            db.session.commit()
 
         if update.edited_message:
             return 'OK'
@@ -75,6 +103,8 @@ async def webhook():
             print('Message')
             chat = gemini.get_model().start_chat()
             text = gemini.send_message(update.message.text, chat)
+            
+            chat.history[0].role ==
 
             print('Response: ', text)
         
@@ -87,6 +117,3 @@ async def webhook():
             "chat_id": chat_id,
             "text": 'Sorry, I am not able to generate content for you right now. Please try again later. '
         }
-
-async def send_message(chat_id, text):
-    await telegram_app.bot.send_message(chat_id=chat_id, text=escape(text), parse_mode="MarkdownV2")

@@ -1,4 +1,4 @@
-from telegram_bot_api import db
+from .telegram_bot_api import db
 
 class ChatMessage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
