@@ -18,7 +18,7 @@ load_dotenv()
 app = Flask(__name__)
 
 
-
+telegram_app = ApplicationBuilder().token(getenv('TELEGRAM_BOT_TOKEN')).build()
 
 @app.get('/')
 def hello_world():
@@ -30,7 +30,6 @@ async def webhook():
     chat_id = None
     gemini = Gemini()
 
-    telegram_app = ApplicationBuilder().token(getenv('TELEGRAM_BOT_TOKEN')).build()
 
     try:
         body = request.get_json()
