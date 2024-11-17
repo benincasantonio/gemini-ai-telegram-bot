@@ -4,13 +4,14 @@
       {
         "src": "src/telegram_bot_api.py",
         "use": "@vercel/python",
-        "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
+        "config": { "maxLambdaSize": "15mb", "runtime": "python3.9", "maxDuration": 35 }
       }
     ],
     "routes": [
       {
         "src": "/(.*)",
         "dest": "src/telegram_bot_api.py"
+        
       }
     ]
 }
