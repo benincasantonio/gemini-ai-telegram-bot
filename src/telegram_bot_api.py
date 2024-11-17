@@ -1,5 +1,3 @@
-import nest_asyncio
-nest_asyncio.apply()
 
 from flask import Flask, request
 from .gemini import Gemini
@@ -17,9 +15,7 @@ load_dotenv()
 
 app = Flask(__name__)
 
-gemini = Gemini()
 
-telegram_app = ApplicationBuilder().token(getenv('TELEGRAM_BOT_TOKEN')).build()
 
 
 @app.get('/')
@@ -30,6 +26,10 @@ def hello_world():
 @app.post('/webhook')
 async def webhook():
     chat_id = None
+    gemini = Gemini()
+
+    telegram_app = ApplicationBuilder().token(getenv('TELEGRAM_BOT_TOKEN')).build()
+    
     try:
         body = request.get_json()
 
