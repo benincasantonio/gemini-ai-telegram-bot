@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from io import BytesIO
 from PIL import Image
 from .enums import TelegramBotCommands
+import asyncio
 
 load_dotenv()
 
@@ -25,9 +26,10 @@ def hello_world():
 
 
 @app.post('/webhook')
-async def webhook():
+def webhook():
     chat_id = None
     try:
+        loop = asyncio.get_event_loop()
         body = request.get_json()
 
         update = Update.de_json(body, telegram_app.bot)
@@ -37,11 +39,11 @@ async def webhook():
         if update.edited_message:
             return 'OK'
         else:
-            message = await telegram_app.bot.send_message(chat_id=chat_id, text="Processing your request...")
+            message =  loop.run_until_complete(telegram_app.bot.send_message(chat_id=chat_id, text="Processing your request..."))
             message_id = message.message_id
 
         if update.message.text == TelegramBotCommands.START:
-            await telegram_app.bot.send_message(chat_id=chat_id, text="Welcome to Gemini Bot. Send me a message or an image to get started.")
+            loop.run_until_complete(telegram_app.bot.send_message(chat_id=chat_id, text="Welcome to Gemini Bot. Send me a message or an image to get started."))
             return 'OK'
 
         
@@ -49,9 +51,9 @@ async def webhook():
             print('Generating images')
             file_id = update.message.photo[-1].file_id
             print(f"Images file id is {file_id}")
-            file = await telegram_app.bot.get_file(file_id)
+            file = loop.run_until_complete(telegram_app.bot.get_file(file_id))
             print("Image file found")
-            bytes_array = await file.download_as_bytearray()
+            bytes_array = loop.run_until_complete(file.download_as_bytearray())
             bytesIO = BytesIO(bytes_array)
             print("Images file as bytes")
             image = Image.open(bytesIO)
@@ -70,7 +72,7 @@ async def webhook():
             chat = gemini.get_model().start_chat()
             text = gemini.send_message(update.message.text, chat)
         
-        await telegram_app.bot.edit_message_text(chat_id= chat_id, text=escape(text), message_id=message_id, parse_mode="MarkdownV2")
+        loop.run_until_complete(telegram_app.bot.edit_message_text(chat_id= chat_id, text=escape(text), message_id=message_id, parse_mode="MarkdownV2"))
         return 'OK'
     except Exception as error:
         print(f"Error Occurred: {error}")
@@ -80,5 +82,3 @@ async def webhook():
             "text": 'Sorry, I am not able to generate content for you right now. Please try again later. '
         }
 
-async def send_message(chat_id, text):
-    await telegram_app.bot.send_message(chat_id=chat_id, text=escape(text), parse_mode="MarkdownV2")
