@@ -44,6 +44,8 @@ class Gemini:
 
         function_response = self.__plugin_manager.get_function_response(function_call, chat)
 
+        print("Response: " + function_response.__str__())
+
         return function_response.parts[0].text
     
 
