@@ -46,6 +46,9 @@ class Gemini:
 
         print("Response: " + function_response.__str__())
 
+        if(function_response.text == None):
+            return "I'm sorry, An error occurred. Please try again."
+
         return function_response.parts[0].text
     
 
