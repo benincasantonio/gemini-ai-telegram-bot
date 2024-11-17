@@ -18,8 +18,6 @@ load_dotenv()
 app = Flask(__name__)
 
 
-telegram_app = ApplicationBuilder().token(getenv('TELEGRAM_BOT_TOKEN')).build()
-
 @app.get('/')
 def hello_world():
     return 'Hello, World!'
@@ -28,6 +26,9 @@ def hello_world():
 @app.post('/webhook')
 async def webhook():
     chat_id = None
+    
+
+    telegram_app = ApplicationBuilder().token(getenv('TELEGRAM_BOT_TOKEN')).build()
     gemini = Gemini()
 
 
