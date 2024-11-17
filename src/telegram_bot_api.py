@@ -1,3 +1,5 @@
+import nest_asyncio
+nest_asyncio.apply()
 
 from flask import Flask, request
 from .gemini import Gemini
@@ -29,7 +31,7 @@ async def webhook():
     gemini = Gemini()
 
     telegram_app = ApplicationBuilder().token(getenv('TELEGRAM_BOT_TOKEN')).build()
-    
+
     try:
         body = request.get_json()
 
