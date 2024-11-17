@@ -1,3 +1,6 @@
+import nest_asyncio
+nest_asyncio.apply()
+
 from flask import Flask, request
 from .gemini import Gemini
 from md2tgmd import escape
