@@ -67,6 +67,7 @@ async def webhook():
             text = gemini.send_image(prompt, image)
 
         else:
+            print('Message')
             chat = gemini.get_model().start_chat()
             text = gemini.send_message(update.message.text, chat)
         
