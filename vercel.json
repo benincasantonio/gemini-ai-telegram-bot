@@ -2,7 +2,7 @@
     "version": 2,
     "builds": [
       {
-        "src": "run.py",
+        "src": "run",
         "use": "@vercel/python",
         "config": { "maxLambdaSize": "15mb", "runtime": "python3.9", "maxDuration": 60 }
       }
@@ -10,7 +10,7 @@
     "routes": [
       {
         "src": "/(.*)",
-        "dest": "run.py"
+        "dest": "run"
         
       }
     ]
