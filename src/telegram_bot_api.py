@@ -112,3 +112,6 @@ async def webhook():
             "chat_id": chat_id,
             "text": 'Sorry, I am not able to generate content for you right now. Please try again later. '
         }
+
+if __name__ == '__main__':
+    app.run(debug=True)

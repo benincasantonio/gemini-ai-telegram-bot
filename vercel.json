@@ -1,17 +1,17 @@
 {
-    "version": 2,
-    "builds": [
-      {
-        "src": "run",
-        "use": "@vercel/python",
-        "config": { "maxLambdaSize": "15mb", "runtime": "python3.9", "maxDuration": 60 }
-      }
-    ],
-    "routes": [
-      {
-        "src": "/(.*)",
-        "dest": "run"
-        
-      }
-    ]
+  "version": 2,
+  "builds": [
+    {
+      "src": "src/telegram_bot_api.py",
+      "use": "@vercel/python",
+      "config": { "maxLambdaSize": "15mb", "runtime": "python3.9", "maxDuration": 60 }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "src/telegram_bot_api.py"
+      
+    }
+  ]
 }
