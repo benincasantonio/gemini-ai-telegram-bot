@@ -4,14 +4,11 @@ from md2tgmd import escape
 from telegram.ext import ApplicationBuilder
 from telegram import Update
 from os import getenv
-from dotenv import load_dotenv
 from io import BytesIO
 from PIL import Image
 from .enums import TelegramBotCommands
 from .flask_app import app, db
 from .models import ChatSession
-
-load_dotenv()
 
 
 @app.get('/')
