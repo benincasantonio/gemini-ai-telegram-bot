@@ -1,4 +1,4 @@
-from telegram_bot_api import ApplicationBuilder
+from telegram.ext import ApplicationBuilder
 from os import getenv
 from .enums import TelegramBotCommands
 
