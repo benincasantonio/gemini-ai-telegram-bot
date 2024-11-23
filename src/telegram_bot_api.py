@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import request
 from .gemini import Gemini
 from md2tgmd import escape
 from telegram.ext import ApplicationBuilder
@@ -8,30 +8,10 @@ from dotenv import load_dotenv
 from io import BytesIO
 from PIL import Image
 from .enums import TelegramBotCommands
-from .config import Config
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-import logging
+from .flask_app import app, db
+from .models import ChatSession
 
 load_dotenv()
-
-
-app = Flask(__name__)
-app.config.from_object(Config)
-
-db = SQLAlchemy(app)
-
-migrate = Migrate(app, db)
-
-
-if not app.debug:
-    stream_handler = logging.StreamHandler()
-    stream_handler.setLevel(logging.INFO)
-    app.logger.addHandler(stream_handler)
-
-app.logger.setLevel(logging.INFO)
-app.logger.info('Application started')
-
 
 
 @app.get('/')
@@ -110,16 +90,3 @@ async def webhook():
             "chat_id": chat_id,
             "text": 'Sorry, I am not able to generate content for you right now. Please try again later. '
         }
-
-
-class ChatMessage(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    chat_id = db.Column(db.Integer, db.ForeignKey('chat_session.id'), nullable=False)
-    text = db.Column(db.Text)
-    date = db.Column(db.DateTime)
-
-class ChatSession(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    chat_id = db.Column(db.Integer, unique=True, nullable=False)
-    messages = db.relationship('ChatMessage', backref='chat_session')
-    
