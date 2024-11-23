@@ -1,4 +1,4 @@
-from flask_app import db
+from .flask_app import db
 
 class ChatMessage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
