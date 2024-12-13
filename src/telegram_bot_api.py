@@ -80,7 +80,7 @@ async def webhook():
             chat_message = ChatMessage(chat_id=chat_id, text=text, date=update.message.date)
             session.messages.append(chat_message)
             db.session.commit()
-            log("Chat Session: ", session)
+            log(1, "Chat Session: ", session)
             
             print('Response: ', text)
         
