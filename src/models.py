@@ -5,6 +5,8 @@ class ChatMessage(db.Model):
     chat_id = db.Column(db.Integer, db.ForeignKey('chat_session.id'), nullable=False)
     text = db.Column(db.Text)
     date = db.Column(db.DateTime)
+    role = db.Column(db.String(20))
+
 
 class ChatSession(db.Model):
     id = db.Column(db.Integer, primary_key=True)
