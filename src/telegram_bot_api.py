@@ -74,7 +74,18 @@ async def webhook():
 
         else:
             print('Message')
-            chat = gemini.get_model().start_chat()
+            history = []
+            if(session.messages.count() > 0):
+                for message in session.messages:
+                    history.append({
+                        "role": message.role,
+                        "parts": [
+                            {
+                                "text": message.text
+                            }
+                        ]
+                    })
+            chat = gemini.get_model().start_chat(history=history)
             text = gemini.send_message(update.message.text, chat)
             # Add the user message to the chat session
             chat_message = ChatMessage(chat_id=chat_id, text=update.message.text, date=update.message.date, role="user")
