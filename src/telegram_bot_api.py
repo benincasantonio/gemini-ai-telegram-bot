@@ -8,7 +8,8 @@ from io import BytesIO
 from PIL import Image
 from .enums import TelegramBotCommands
 from .flask_app import app, db
-from .models import ChatSession
+from .models import ChatSession, ChatMessage
+from logging import log
 
 
 @app.get('/')
@@ -38,6 +39,7 @@ async def webhook():
             session = ChatSession(chat_id=chat_id, messages=[])
             db.session.add(session)
             db.session.commit()
+        
 
         if update.edited_message:
             return 'OK'
@@ -75,6 +77,9 @@ async def webhook():
             print('Message')
             chat = gemini.get_model().start_chat()
             text = gemini.send_message(update.message.text, chat)
+            session.messages.append(ChatMessage(chat_id=chat_id, text=update.message.text, date=update.message.date))
+            db.session.commit()
+            log("Chat Session: ", session)
             
             print('Response: ', text)
         
