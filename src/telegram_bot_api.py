@@ -75,7 +75,7 @@ async def webhook():
         else:
             print('Message')
             history = []
-            if(session.messages.count() > 0):
+            if(len(session.messages) > 0):
                 for message in session.messages:
                     history.append({
                         "role": message.role,
