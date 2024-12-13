@@ -77,7 +77,8 @@ async def webhook():
             print('Message')
             chat = gemini.get_model().start_chat()
             text = gemini.send_message(update.message.text, chat)
-            session.messages.append(ChatMessage(chat_id=chat_id, text=update.message.text, date=update.message.date))
+            chat_message = ChatMessage(chat_id=chat_id, text=text, date=update.message.date)
+            session.messages.append(chat_message)
             db.session.commit()
             log("Chat Session: ", session)
             
