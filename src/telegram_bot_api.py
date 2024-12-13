@@ -7,8 +7,7 @@ from os import getenv
 from io import BytesIO
 from PIL import Image
 from .enums import TelegramBotCommands
-from .flask_app import app, db
-from .models import ChatSession, ChatMessage
+from .flask_app import app, db, ChatMessage, ChatSession
 from logging import log
 
 
