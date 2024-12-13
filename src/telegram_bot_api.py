@@ -86,7 +86,6 @@ async def webhook():
             db.session.commit()
             
             print('Response: ', text)
-            print('History: ' chat.history)
         await telegram_app.bot.edit_message_text(chat_id= chat_id, text=escape(text), message_id=message_id, parse_mode="MarkdownV2")
         return 'OK'
     except Exception as error:
