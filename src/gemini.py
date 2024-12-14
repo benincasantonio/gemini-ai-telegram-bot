@@ -54,4 +54,5 @@ class Gemini:
 
     def send_image(self, prompt: str, image: PIL.Image):
         response = self.__pro_model_vision.generate_content([prompt, image])
+        print("Image response: " + response.text)
         return response.text

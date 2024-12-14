@@ -74,8 +74,14 @@ async def webhook():
 
             text = gemini.send_image(prompt, image)
 
-
-
+            # Add the user message to the chat session
+            chat_message = ChatMessage(chat_id=chat_id, text=update.message.text, date=update.message.date, role="user")
+            session.messages.append(chat_message)
+            db.session.commit()
+            # add the model response to the chat session
+            chat_message = ChatMessage(chat_id=chat_id, text=text, date=update.message.date, role="model")
+            session.messages.append(chat_message)
+            db.session.commit()
         else:
             history = []
             if(len(session.messages) > 0):
