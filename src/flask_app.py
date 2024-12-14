@@ -5,6 +5,7 @@ import logging
 from flask import Flask
 from .telegram_bot_utils import set_telegram_bot_commands
 from dotenv import load_dotenv
+import asyncio
 
 load_dotenv()
 
@@ -25,7 +26,7 @@ if not app.debug:
 app.logger.setLevel(logging.INFO)
 app.logger.info('Application started')
 
-set_telegram_bot_commands()
+asyncio.run(set_telegram_bot_commands())
 
 class ChatMessage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
