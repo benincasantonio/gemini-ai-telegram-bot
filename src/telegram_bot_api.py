@@ -41,12 +41,7 @@ async def webhook():
         
 
         if update.edited_message:
-            return 'OK'
-        else:
-            print('sending message')
-            message = await telegram_app.bot.send_message(chat_id=chat_id, text="Processing your request...")
-            message_id = message.message_id
-            print('message sent')
+            return 'OK'        
         if update.message.text == TelegramBotCommands.START:
             await telegram_app.bot.send_message(chat_id=chat_id, text="Welcome to Gemini Bot. Send me a message or an image to get started.")
             return 'OK'
@@ -56,6 +51,9 @@ async def webhook():
 
             await telegram_app.bot.send_message(chat_id=chat_id, text="New chat started.")
             return 'OK'
+        else:
+            message = await telegram_app.bot.send_message(chat_id=chat_id, text="Processing your request...")
+            message_id = message.message_id
 
         
         if update.message.photo:
