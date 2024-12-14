@@ -53,16 +53,18 @@ async def webhook():
 
         
         if update.message.photo:
-            print('Generating images')
+            
+            app.logger.info("Image received")
+            
             file_id = update.message.photo[-1].file_id
-            print(f"Images file id is {file_id}")
+
+            app.logger.info("Image file id: " + str(file_id))
+
             file = await telegram_app.bot.get_file(file_id)
-            print("Image file found")
             bytes_array = await file.download_as_bytearray()
             bytesIO = BytesIO(bytes_array)
-            print("Images file as bytes")
             image = Image.open(bytesIO)
-            print("Image opened")
+            app.logger.info("Image loaded")
 
             prompt = 'Describe the image'
 
@@ -72,21 +74,23 @@ async def webhook():
 
             text = gemini.send_image(prompt, image)
 
+
+
         else:
-            print('Message')
             history = []
             if(len(session.messages) > 0):
                 for message in session.messages:
                     history.append({
                         "role": message.role,
                         "parts": [
-                            {
+                            {                                
                                 "text": message.text
                             }
                         ]
                     })
             chat = gemini.get_model().start_chat(history=history)
             text = gemini.send_message(update.message.text, chat)
+            
             # Add the user message to the chat session
             chat_message = ChatMessage(chat_id=chat_id, text=update.message.text, date=update.message.date, role="user")
             session.messages.append(chat_message)

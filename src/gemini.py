@@ -33,7 +33,7 @@ class Gemini:
     def send_message(self, prompt: str, chat: gen_ai.ChatSession) -> str:
         function_request = chat.send_message(prompt, tools=self.__plugin_manager.get_tools())
         
-        print(function_request.__str__())
+        print("Function Request: " + function_request.__str__())
 
         function_call = function_request.candidates[0].content.parts[0].function_call
 
