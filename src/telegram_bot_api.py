@@ -51,6 +51,7 @@ async def webhook():
             await telegram_app.bot.send_message(chat_id=chat_id, text="Welcome to Gemini Bot. Send me a message or an image to get started.")
             return 'OK'
         if update.message.text == TelegramBotCommands.NEW_CHAT:
+            print('Delete Count: '+ db.session.query(ChatMessage).filter_by(chat_id=chat_id).count().__str__())
             db.session.query(ChatMessage).filter_by(id=session.id).delete()
             db.session.commit()
             await telegram_app.bot.send_message(chat_id=chat_id, text="New chat started.")
