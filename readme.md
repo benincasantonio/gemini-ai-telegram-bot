@@ -1,4 +1,4 @@
-# Telegram Bot API
+# Gemini Telegram BOT
 
 ## Description
 This project is a chatbot application that uses Google's Generative AI (Gemini) to generate responses. It is built with Python and uses Flask for the web server. The chatbot can be interacted with via a Telegram bot.
