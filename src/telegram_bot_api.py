@@ -22,7 +22,7 @@ async def webhook():
     telegram_app = ApplicationBuilder().token(getenv('TELEGRAM_BOT_TOKEN')).build()
     gemini = Gemini()
 
-    enable_secure_webhook_token = getenv('ENABLE_SECURE_WEBHOOK_TOKEN', True) 
+    enable_secure_webhook_token = getenv('ENABLE_SECURE_WEBHOOK_TOKEN') == 'True'
 
     if enable_secure_webhook_token:
         headers_secret_token = request.headers.get('X-Telegram-Bot-Api-Secret-Token')
