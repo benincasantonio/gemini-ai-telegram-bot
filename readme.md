@@ -24,8 +24,12 @@ This section tracks the progress of the project. The following features are plan
 - [x] Implement a basic plugin
 - [x] Implement DateTimePlugin
 - [x] Implement gemini vision api, to recognize images
-- [ ] Chat history mode
+- [x] Chat history mode
 - [x] Implement other plugins (e.g. weather, stock, etc.)
 - [x] Setup Continuous Delivery
 - [ ] Http certificate to secure the webhook endpoint
 - [ ] Make it work in telegram groups
+
+## Contributing
+
+Contributions are welcome! Feel free to open issues or submit PRs to help improve the project.
