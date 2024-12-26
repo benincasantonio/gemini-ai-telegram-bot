@@ -28,7 +28,7 @@ This section tracks the progress of the project. The following features are plan
 - [x] Implement other plugins (e.g. weather, stock, etc.)
 - [x] Setup Continuous Delivery
 - [ ] Http certificate to secure the webhook endpoint
-- [ ] Make it work in telegram groups
+- [ ] Make it work in telegram groups | [Issue #1](https://github.com/benincasantonio/gemini-ai-telegram-bot/issues/1)
 
 ## Contributing
 
