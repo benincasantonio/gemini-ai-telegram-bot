@@ -19,7 +19,6 @@ def hello_world():
 @app.post('/webhook')
 async def webhook():
     chat_id = None
-    
 
     telegram_app = ApplicationBuilder().token(getenv('TELEGRAM_BOT_TOKEN')).build()
     gemini = Gemini()
