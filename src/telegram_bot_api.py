@@ -28,12 +28,7 @@ async def webhook():
 
     print("Enable secure webhook token: ", enable_secure_webhook_token)
 
-    if enable_secure_webhook_token:
-        headers_secret_token = request.headers.get('X-Telegram-Bot-Api-Secret-Token')
-        secret_token = getenv('TELEGRAM_WEBHOOK_SECRET')
-        if headers_secret_token != secret_token or headers_secret_token is None:
-            await telegram_app.bot.send_message(chat_id=chat_id, text="Invalid secret token")
-            return 'OK'
+    
     
 
     
@@ -45,6 +40,13 @@ async def webhook():
         update = Update.de_json(body, telegram_app.bot)
 
         chat_id = update.message.chat_id
+
+        if enable_secure_webhook_token:
+            headers_secret_token = request.headers.get('X-Telegram-Bot-Api-Secret-Token')
+            secret_token = getenv('TELEGRAM_WEBHOOK_SECRET')
+            if headers_secret_token != secret_token or headers_secret_token is None:
+                await telegram_app.bot.send_message(chat_id=chat_id, text="Invalid secret token")
+                return 'OK'
 
         session = db.session.query(ChatSession).filter_by(chat_id=chat_id).first()
 
