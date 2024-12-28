@@ -34,8 +34,7 @@ async def webhook():
         chat_id = update.message.chat_id
 
         if enable_secure_webhook_token:
-            print(request.headers.get('host'))
-            headers_secret_token = request.headers.get('X-Telegram-Bot-Api-Secret-Token')
+            headers_secret_token = request.headers.get('x-telegram-bot-api-secret-token')
             print(f"Headers secret token: {headers_secret_token}")
             secret_token = getenv('TELEGRAM_WEBHOOK_SECRET')
             if headers_secret_token != secret_token or headers_secret_token is None:
