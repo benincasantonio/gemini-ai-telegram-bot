@@ -29,7 +29,7 @@ This section tracks the progress of the project. The following features are plan
 - [x] Chat history mode
 - [x] Implement other plugins (e.g. weather, stock, etc.)
 - [x] Setup Continuous Delivery
-- [ ] Implement Secure Token Validation for Telegram Webhook Requests | [Issue #2](https://github.com/benincasantonio/gemini-ai-telegram-bot/issues/2)
+- [x] Implement Secure Token Validation for Telegram Webhook Requests | [Issue #2](https://github.com/benincasantonio/gemini-ai-telegram-bot/issues/2)
 - [ ] Make it work in telegram groups | [Issue #1](https://github.com/benincasantonio/gemini-ai-telegram-bot/issues/1)
 
 ## Contributing
