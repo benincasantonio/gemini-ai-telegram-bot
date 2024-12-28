@@ -22,16 +22,8 @@ async def webhook():
     telegram_app = ApplicationBuilder().token(getenv('TELEGRAM_BOT_TOKEN')).build()
     gemini = Gemini()
 
-    """ enable_secure_webhook_token = getenv('ENABLE_SECURE_WEBHOOK_TOKEN') == 'True' if True else False """
-
     enable_secure_webhook_token = getenv('ENABLE_SECURE_WEBHOOK_TOKEN') in ('True', None)
 
-    print("Enable secure webhook token: ", enable_secure_webhook_token)
-
-    
-    
-
-    
 
 
     try:
@@ -45,7 +37,7 @@ async def webhook():
             headers_secret_token = request.headers.get('X-Telegram-Bot-Api-Secret-Token')
             secret_token = getenv('TELEGRAM_WEBHOOK_SECRET')
             if headers_secret_token != secret_token or headers_secret_token is None:
-                await telegram_app.bot.send_message(chat_id=chat_id, text="Invalid secret token")
+                await telegram_app.bot.send_message(chat_id=chat_id, text="You are not authorized to access this service.")
                 return 'OK'
 
         session = db.session.query(ChatSession).filter_by(chat_id=chat_id).first()
