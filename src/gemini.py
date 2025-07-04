@@ -3,7 +3,7 @@ from os import getenv
 import PIL.Image
 import google.generativeai as gen_ai
 
-from src.config import Config
+from .config import Config
 from .plugin_manager import PluginManager
 import PIL as PIL
 
