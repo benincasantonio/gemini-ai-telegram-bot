@@ -2,6 +2,8 @@ from os import getenv
 
 import PIL.Image
 import google.generativeai as gen_ai
+
+from .config import Config
 from .plugin_manager import PluginManager
 import PIL as PIL
 
@@ -15,8 +17,10 @@ class Gemini:
 
     def __init__(self):
         gen_ai.configure(api_key=getenv('GEMINI_API_KEY'))
+        self.__model_name = getenv('GEMINI_MODEL_NAME', Config.DEFAULT_GEMINI_MODEL_NAME)
+
         self.__model = gen_ai.GenerativeModel(
-            model_name="gemini-1.5-flash",
+            model_name=self.__model_name,
             generation_config=self.__generation_config
         )
 

@@ -14,10 +14,12 @@ The following environment variables are required for the application to run:
    | Variable             | Description                               | Default Value |
    |----------------------|-------------------------------------------|---------------|
    | `GEMINI_API_KEY`     | Your Gemini API key                       | None          |
+   | `GEMINI_MODEL_NAME`  | The Gemini model name                     | `gemini-2.0-flash-lite`       |
    | `TELEGRAM_BOT_TOKEN` | Your Telegram Bot token                   | None          |
    | `OWM_API_KEY`        | Your [Open Weather Map](https://openweathermap.org/api) API Key             | None          |
    | `ENABLE_SECURE_WEBHOOK_TOKEN` | Enable validation of a secure token passed to the Telegram API webhook to prevent unauthorized access. Allowed values are 'True' or 'False'. | True |
-   | `TELEGRAM_WEBHOOK_SECRET` | A secure token used to validate incoming requests to the Telegram API webhook. | None
+   | `TELEGRAM_WEBHOOK_SECRET` | A secure token used to validate incoming requests to the Telegram API webhook. | None |
+   
    
 ## Project Progress
 This section tracks the progress of the project. The following features are planned or have been implemented:
