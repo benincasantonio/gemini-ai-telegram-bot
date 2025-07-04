@@ -15,16 +15,16 @@ class Gemini:
 
     def __init__(self):
         gen_ai.configure(api_key=getenv('GEMINI_API_KEY'))
-        self.__pro_model = gen_ai.GenerativeModel(
+        self.__model = gen_ai.GenerativeModel(
             model_name="gemini-1.5-flash",
             generation_config=self.__generation_config
         )
 
     def get_model(self):
-        return self.__pro_model
+        return self.__model
 
     def generate_content(self, prompt: str):
-        return self.__pro_model.generate_content(prompt, generation_config=self.__generation_config)
+        return self.__model.generate_content(prompt, generation_config=self.__generation_config)
 
     def send_message(self, prompt: str, chat: gen_ai.ChatSession) -> str:
         function_request = chat.send_message(prompt, tools=self.__plugin_manager.get_tools())
@@ -49,6 +49,6 @@ class Gemini:
     
 
     def send_image(self, prompt: str, image: PIL.Image):
-        response = self.__pro_model.generate_content([prompt, image])
+        response = self.__model.generate_content([prompt, image])
         print("Image response: " + response.text)
         return response.text
