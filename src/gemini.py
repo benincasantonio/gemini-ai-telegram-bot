@@ -17,7 +17,7 @@ class Gemini:
 
     def __init__(self):
         gen_ai.configure(api_key=getenv('GEMINI_API_KEY'))
-        self.__model_name = getenv('GEMINI_MODEL_NAME', Config.DEFAULT_GEMINI_MODEL)
+        self.__model_name = getenv('GEMINI_MODEL_NAME', Config.DEFAULT_GEMINI_MODEL_NAME)
 
         self.__model = gen_ai.GenerativeModel(
             model_name=self.__model_name,
