@@ -25,7 +25,7 @@ This section tracks the progress of the project. The following features are plan
 - [x] Implement Gemini model
 - [x] Implement a basic plugin
 - [x] Implement DateTimePlugin
-- [x] Implement gemini vision api, to recognize images
+- [x] Implement gemini multimodal api, to recognize images and text
 - [x] Chat history mode
 - [x] Implement other plugins (e.g. weather, stock, etc.)
 - [x] Setup Continuous Delivery

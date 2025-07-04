@@ -19,10 +19,6 @@ class Gemini:
             model_name="gemini-1.5-flash",
             generation_config=self.__generation_config
         )
-        self.__pro_model_vision = gen_ai.GenerativeModel(
-            model_name="gemini-1.5-flash",
-            generation_config=self.__generation_config
-        )
 
     def get_model(self):
         return self.__pro_model
@@ -53,6 +49,6 @@ class Gemini:
     
 
     def send_image(self, prompt: str, image: PIL.Image):
-        response = self.__pro_model_vision.generate_content([prompt, image])
+        response = self.__pro_model.generate_content([prompt, image])
         print("Image response: " + response.text)
         return response.text
