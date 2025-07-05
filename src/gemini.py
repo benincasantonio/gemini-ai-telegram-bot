@@ -40,7 +40,7 @@ class Gemini:
             "You may not need to use tools for every query - the user may just want to chat!"
         )
 
-        self.__agent = create_react_agent(model=self.__llm, tools=self.__plugin_manager.get_tools(), prompt=prompt)
+        self.__agent = create_react_agent(llm=self.__llm, tools=self.__plugin_manager.get_tools(), prompt=prompt)
 
 
         base_message = self.__agent.invoke({
