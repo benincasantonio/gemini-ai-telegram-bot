@@ -35,38 +35,18 @@ class Gemini:
         return self.__llm
 
     def send_message(self, prompt: str, chat_history) -> str:
-        print("Send Message")
-        template = '''
-            You are an helpful and friendly AI assistant. You can answer questions, provide information, and assist with various tasks. You have access to a set of tools that you can use to help you answer questions or perform tasks. If you need to use a tool, call it with the appropriate parameters.
-            Tools: {tools}
-        '''
+        self.__llm.bind_tools(self.__plugin_manager.get_tools())
 
-        prompt_template = PromptTemplate(
-            template=template,
-            input_variables=["tools"],
-            partial_variables={
-                "tools": self.__plugin_manager.get_tools(),
-            },
-        )
-        print("System prompt: " + prompt_template.__str__())
-        agent = create_react_agent(
-            llm=self.__llm,
-            tools=self.__plugin_manager.get_tools(),
-            prompt=prompt_template,
-        )
-
-        print("Agent created with prompt: " + prompt)
-        agent_executor = AgentExecutor(
-            agent=agent, tools=self.__plugin_manager.get_tools(), verbose=True
-        )
-
-        print("Agent executor: " + agent_executor.__str__())
-
-        invoke_response = agent_executor.invoke(
-            {
-                "input": prompt,
-                # "chat_history": prompt[:-1] if len(prompt) > 1 else []
-            }
+        invoke_response = self.__llm.invoke(
+            LanguageModelInput(
+                messages=[
+                    {
+                        "role": "user",
+                        "content": prompt,
+                    }
+                ],
+                chat_history=chat_history,
+            )
         )
 
         print("Base message: " + invoke_response.__str__())
