@@ -1,6 +1,6 @@
 from datetime import datetime
 from pytz import timezone
-from google.generativeai.types import FunctionDeclaration, Tool
+from langchain_core.tools import Tool
 
 
 class DateTimePlugin:
@@ -18,16 +18,11 @@ class DateTimePlugin:
             }
         }
 
-    def function_declaration(self):
-        return FunctionDeclaration(
-            name=self.__name,
-            description=self.__description,
-            parameters=self.__parameters,
-        )
-
     def get_tool(self) -> Tool:
         return Tool(
-            function_declarations=[self.function_declaration()]
+            name=self.__name,
+            description=self.__description,
+            func=DateTimePlugin.get_date_time
         )
 
     @staticmethod

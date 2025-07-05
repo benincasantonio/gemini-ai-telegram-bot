@@ -1,4 +1,6 @@
 from flask import request
+from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
+
 from .gemini import Gemini
 from md2tgmd import escape
 from telegram.ext import ApplicationBuilder
@@ -94,20 +96,29 @@ async def webhook():
             session.messages.append(chat_message)
             db.session.commit()
         else:
-            history = []
-            if(len(session.messages) > 0):
+            history: list[BaseMessage] = []
+            if len(session.messages) > 0:
                 for message in session.messages:
-                    history.append({
-                        "role": message.role,
-                        "parts": [
-                            {                                
-                                "text": message.text
-                            }
-                        ]
-                    })
+                    history_type = HumanMessage
+                    if message.role == 'user':
+                        history_type = HumanMessage
+                    elif message.role == 'model':
+                        history_type = AIMessage
+
+                    message = history_type(
+                        content=message.text
+                    )
+
+                    history.append(message)
             print("History: ", history.__str__())
-            chat = gemini.get_model().start_chat(history=history)
-            text = gemini.send_message(update.message.text, chat)
+
+            history.append(
+                HumanMessage(
+                    content=update.message.text
+                )
+            )
+            #chat = gemini.get_model().start_chat(history=history)
+            text = gemini.send_message(history)
             
             # Add the user message to the chat session
             chat_message = ChatMessage(chat_id=chat_id, text=update.message.text, date=update.message.date, role="user")

@@ -1,9 +1,9 @@
-from google.generativeai.types import FunctionDeclaration, Tool
 from pyowm import OWM
 from dotenv import load_dotenv
 from os import getenv
 from datetime import datetime
 import dateparser
+from langchain_core.tools import Tool
 
 load_dotenv()
 owm = OWM(getenv('OWM_API_KEY'))
@@ -31,16 +31,12 @@ class WeatherPlugin:
             }
         }
 
-    def function_declaration(self):
-        return FunctionDeclaration(
-            name=self.name,
-            description=self.description,
-            parameters=self.parameters,
-        )
     
     def get_tool(self) -> Tool:
         return Tool(
-            function_declarations=[self.function_declaration()]
+            name=self.name,
+            description=self.description,
+            func=WeatherPlugin.get_weather
         )
     
 
