@@ -44,6 +44,7 @@ class WeatherPlugin:
     
 
     def get_weather(city: str, date_time: str = datetime.now().strftime('%d-%m-%Y'), unit: str = 'celsius') -> str:
+        print("Executing get_weather with parameters: ")
         print("City: " + city)
         print("Unit: " + unit)
         print("Date and time: " + date_time.__str__())
