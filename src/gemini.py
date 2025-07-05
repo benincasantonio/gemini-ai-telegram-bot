@@ -1,7 +1,6 @@
 from os import getenv
 
 import PIL.Image
-import google.generativeai as gen_ai
 from langchain_core.language_models import LanguageModelInput
 
 from .config import Config
