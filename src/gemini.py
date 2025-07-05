@@ -37,7 +37,7 @@ class Gemini:
     def send_message(self, prompt: str, chat_history) -> str:
         print("Send Message")
         system_prompt = hub.pull("hwchase17/react")
-        print("System prompt: " + system_prompt)
+        print("System prompt: " + system_prompt.__str__())
         agent = create_react_agent(llm=self.__llm, tools=self.__plugin_manager.get_tools(), prompt=system_prompt)
 
         print('Agent created with prompt: ' + prompt)
