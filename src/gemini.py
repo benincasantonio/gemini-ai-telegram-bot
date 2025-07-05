@@ -43,7 +43,9 @@ class Gemini:
 
     def send_message(self, prompt: LanguageModelInput) -> str:
         base_message = self.__agent.invoke(
-            input=prompt
+            input={
+                "messages": prompt
+            }
         )
 
 
