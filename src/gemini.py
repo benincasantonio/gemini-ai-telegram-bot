@@ -8,6 +8,7 @@ from .plugin_manager import PluginManager
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain import hub
 from langchain.agents import create_react_agent, AgentExecutor
+from langchain_core.prompts import PromptTemplate
 
 
 class Gemini:
@@ -35,15 +36,23 @@ class Gemini:
 
     def send_message(self, prompt: str, chat_history) -> str:
         print("Send Message")
-        system_prompt = prompt = (
-            "You are a helpful assistant. "
-            "You may not need to use tools for every query - the user may just want to chat!"
+        template = '''
+            You are an helpful and friendly AI assistant. You can answer questions, provide information, and assist with various tasks. You have access to a set of tools that you can use to help you answer questions or perform tasks. If you need to use a tool, call it with the appropriate parameters.
+            Tools: {tools}
+        '''
+
+        prompt_template = PromptTemplate(
+            template=template,
+            input_variables=["tools"],
+            partial_variables={
+                "tools": self.__plugin_manager.get_tools(),
+            },
         )
-        print("System prompt: " + system_prompt.__str__())
+        print("System prompt: " + prompt_template.__str__())
         agent = create_react_agent(
             llm=self.__llm,
             tools=self.__plugin_manager.get_tools(),
-            prompt=system_prompt,
+            prompt=prompt_template,
         )
 
         print("Agent created with prompt: " + prompt)
