@@ -35,11 +35,8 @@ class Gemini:
         return self.__model
 
     def send_message(self, prompt: LanguageModelInput) -> str:
-        system_prompt = (
-            "You are a helpful assistant. "
-            "You may not need to use tools for every query - the user may just want to chat!"
-        )
-
+        system_prompt = hub.pull("hwchase17/react")
+        print("System prompt: " + system_prompt)
         self.__agent = create_react_agent(llm=self.__llm, tools=self.__plugin_manager.get_tools(), prompt=system_prompt)
 
         print('Agent created with prompt: ' + prompt)
