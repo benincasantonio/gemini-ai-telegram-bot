@@ -105,11 +105,11 @@ async def webhook():
                     elif message.role == 'model':
                         history_type = AIMessage
 
-                    message = history_type(
+                    message_instance = history_type(
                         content=message.text
                     )
 
-                    history.append(message)
+                    history.append(message_instance)
             print("History: ", history.__str__())
 
             history.append(
