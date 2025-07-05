@@ -34,7 +34,8 @@ class Gemini:
     def get_model(self):
         return self.__model
 
-    def send_message(self, prompt: LanguageModelInput) -> str:
+    def send_message(self, prompt: str, chat_history) -> str:
+        print("Send Message")
         system_prompt = hub.pull("hwchase17/react")
         print("System prompt: " + system_prompt)
         self.__agent = create_react_agent(llm=self.__llm, tools=self.__plugin_manager.get_tools(), prompt=system_prompt)
@@ -45,8 +46,8 @@ class Gemini:
         print("Agent executor: " + self.__agent_executor.__str__())
 
         invoke_response = self.__agent_executor.invoke({
-            "input": prompt[-1].text,
-            "chat_history": prompt[:-1] if len(prompt) > 1 else []
+            "input": prompt,
+            #"chat_history": prompt[:-1] if len(prompt) > 1 else []
         })
 
         print("Base message: " + invoke_response.__str__())
