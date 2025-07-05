@@ -111,17 +111,11 @@ async def webhook():
 
                     history.append(message_instance)
 
-            history.append(
-                HumanMessage(
-                    content=update.message.text
-                )
-            )
-
 
             print("History: ", history)
             
             #chat = gemini.get_model().start_chat(history=history)
-            text = gemini.send_message(history)
+            text = gemini.send_message(update.message.text, history)
             
             # Add the user message to the chat session
             chat_message = ChatMessage(chat_id=chat_id, text=update.message.text, date=update.message.date, role="user")

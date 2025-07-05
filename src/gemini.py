@@ -31,8 +31,8 @@ class Gemini:
         
         print("Setup Agent")
 
-    def get_model(self):
-        return self.__model
+    def get_llm(self):
+        return self.__llm
 
     def send_message(self, prompt: str, chat_history) -> str:
         print("Send Message")
