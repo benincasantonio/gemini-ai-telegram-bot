@@ -9,10 +9,10 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 
 
 class Gemini:
-    __generation_config: gen_ai.GenerationConfig = gen_ai.GenerationConfig(
-        temperature=0.5,
-        max_output_tokens=1024,
-    )
+    # __generation_config: gen_ai.GenerationConfig = gen_ai.GenerationConfig(
+    #     temperature=0.5,
+    #     max_output_tokens=1024,
+    # )
     __plugin_manager = PluginManager()
 
     def __init__(self):
