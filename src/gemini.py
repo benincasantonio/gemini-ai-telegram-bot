@@ -42,10 +42,12 @@ class Gemini:
 
         self.__agent = create_react_agent(llm=self.__llm, tools=self.__plugin_manager.get_tools(), prompt=prompt)
 
-
-        base_message = self.__agent.invoke({
+        print('Agent created with prompt: ' + prompt)
+        invoke_response = self.__agent.invoke({
             "messages": prompt,
         })
+
+        print("Base message: " + invoke_response.__str__())
 
         # function_request = chat.send_message(prompt, tools=self.__plugin_manager.get_tools())
 
@@ -65,7 +67,7 @@ class Gemini:
         # if(function_response.text == None):
         #     return "I'm sorry, An error occurred. Please try again."
 
-        return base_message.text()
+        return invoke_response.output
 
     def send_image(self, prompt: str, image: PIL.Image):
         response = self.__model.generate_content([prompt, image])
