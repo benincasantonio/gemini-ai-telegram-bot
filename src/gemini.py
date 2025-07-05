@@ -6,6 +6,8 @@ from langchain_core.language_models import LanguageModelInput
 from .config import Config
 from .plugin_manager import PluginManager
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain import hub
+from langchain.agents import create_react_agent
 
 
 class Gemini:
@@ -17,7 +19,6 @@ class Gemini:
 
     def __init__(self):
         self.gemini_api_key = getenv('GEMINI_API_KEY')
-        self.__langchain_feature_enabled = getenv('LANGCHAIN_FEATURE_ENABLED', False)
 
         self.__model_name = getenv('GEMINI_MODEL_NAME', Config.DEFAULT_GEMINI_MODEL_NAME)
 
@@ -27,14 +28,22 @@ class Gemini:
             google_api_key=self.gemini_api_key
         )
 
+        prompt = hub.pull('hwchase17/react')
+
+        self.__agent = create_react_agent(
+            llm=self.__model,
+            tools=self.__plugin_manager.get_tools(),
+            prompt=prompt,
+        )
+        
+
 
     def get_model(self):
         return self.__model
 
     def send_message(self, prompt: LanguageModelInput) -> str:
-        base_message = self.__model.invoke(
-            input=prompt,
-            tools=self.__plugin_manager.get_tools()
+        base_message = self.__agent.invoke(
+            input=prompt
         )
 
 

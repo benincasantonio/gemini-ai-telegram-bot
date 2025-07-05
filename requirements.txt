@@ -11,3 +11,4 @@ Flask-Migrate~=4.0.7
 psycopg2-binary~=2.9.10
 langchain-core~=0.3.68
 langchain-google-genai~=2.1.6
+langchain~=0.3.26

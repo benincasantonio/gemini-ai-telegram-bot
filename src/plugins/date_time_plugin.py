@@ -1,6 +1,7 @@
 from datetime import datetime
 from pytz import timezone
 from langchain_core.tools import Tool
+from langchain import hub
 
 
 class DateTimePlugin:
@@ -27,4 +28,5 @@ class DateTimePlugin:
 
     @staticmethod
     def get_date_time(time_zone="Europe/Rome") -> str:
+        print('TIMEZONE')
         return datetime.now(timezone(time_zone)).strftime("%Y-%m-%d %H:%M:%S")
