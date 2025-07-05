@@ -1,5 +1,5 @@
 flask[async]~=3.1.0
-google-generativeai~=0.8.3
+google-generativeai~=0.8.5
 python-dotenv~=1.0.1
 python-telegram-bot~=21.7
 md2tgmd~=0.1.2
@@ -10,3 +10,4 @@ dateparser~=1.2.0
 Flask-SQLAlchemy~=3.1.1
 Flask-Migrate~=4.0.7
 psycopg2-binary~=2.9.10
+langchain-core~=0.3.50

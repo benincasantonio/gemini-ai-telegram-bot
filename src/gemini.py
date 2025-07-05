@@ -5,7 +5,7 @@ import google.generativeai as gen_ai
 
 from .config import Config
 from .plugin_manager import PluginManager
-import PIL as PIL
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 
 class Gemini:
@@ -14,15 +14,28 @@ class Gemini:
         max_output_tokens=1024,
     )
     __plugin_manager = PluginManager()
+    __langchain_feature_enabled = False
 
     def __init__(self):
-        gen_ai.configure(api_key=getenv('GEMINI_API_KEY'))
+        self.gemini_api_key = getenv('GEMINI_API_KEY')
+        self.__langchain_feature_enabled = getenv('LANGCHAIN_FEATURE_ENABLED', False)
+
         self.__model_name = getenv('GEMINI_MODEL_NAME', Config.DEFAULT_GEMINI_MODEL_NAME)
 
-        self.__model = gen_ai.GenerativeModel(
-            model_name=self.__model_name,
-            generation_config=self.__generation_config
-        )
+        if self.__langchain_feature_enabled:
+            self.__model = ChatGoogleGenerativeAI(
+                model=self.__model_name,
+                temperature= 0.5,
+                google_api_key=self.gemini_api_key
+
+            )
+        else:
+            gen_ai.configure(api_key=self.gemini_api_key)
+            self.__model = gen_ai.GenerativeModel(
+                model_name=self.__model_name,
+                generation_config=self.__generation_config
+            )
+
 
     def get_model(self):
         return self.__model
