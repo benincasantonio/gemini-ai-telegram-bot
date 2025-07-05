@@ -1,8 +1,7 @@
 from datetime import datetime
 from pydantic import BaseModel, Field
 from pytz import timezone
-from langchain_core.tools import Tool
-from langchain import hub
+from langchain_core.tools import StructuredTool
 
 
 class DateTimeArgSchema(BaseModel):
@@ -18,11 +17,13 @@ class DateTimePlugin:
         self.__name: str = "get_date_time"
         self.__description: str = "A plugin that returns the current date and time."
 
-    def get_tool(self) -> Tool:
-        return Tool(
+    def get_tool(self) -> StructuredTool:
+        return StructuredTool(
             name=self.__name,
             description=self.__description,
             func=self.get_date_time,
+            args_schema=DateTimeArgSchema,
+            return_direct=True,
         )
 
     @staticmethod
