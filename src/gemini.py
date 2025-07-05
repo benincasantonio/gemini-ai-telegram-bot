@@ -40,8 +40,13 @@ class Gemini:
         self.__agent = create_react_agent(llm=self.__llm, tools=self.__plugin_manager.get_tools(), prompt=system_prompt)
 
         print('Agent created with prompt: ' + prompt)
-        invoke_response = self.__agent.invoke({
-            "messages": prompt,
+        self.__agent_executor = AgentExecutor(agent=self.__agent, tools=self.__plugin_manager.get_tools(), verbose=True)
+        
+        print("Agent executor: " + self.__agent_executor.__str__())
+
+        invoke_response = self.__agent_executor.invoke({
+            "input": prompt[-1].text,
+            "chat_history": prompt[:-1] if len(prompt) > 1 else []
         })
 
         print("Base message: " + invoke_response.__str__())
