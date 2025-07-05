@@ -28,7 +28,6 @@ class Gemini:
             model=self.__model_name, temperature=0.5, google_api_key=self.gemini_api_key
         )
 
-        
         print("Setup Agent")
 
     def get_llm(self):
@@ -36,19 +35,30 @@ class Gemini:
 
     def send_message(self, prompt: str, chat_history) -> str:
         print("Send Message")
-        system_prompt = hub.pull("hwchase17/react")
+        system_prompt = prompt = (
+            "You are a helpful assistant. "
+            "You may not need to use tools for every query - the user may just want to chat!"
+        )
         print("System prompt: " + system_prompt.__str__())
-        agent = create_react_agent(llm=self.__llm, tools=self.__plugin_manager.get_tools(), prompt=system_prompt)
+        agent = create_react_agent(
+            llm=self.__llm,
+            tools=self.__plugin_manager.get_tools(),
+            prompt=system_prompt,
+        )
 
-        print('Agent created with prompt: ' + prompt)
-        agent_executor = AgentExecutor(agent=agent, tools=self.__plugin_manager.get_tools(), verbose=True)
-        
+        print("Agent created with prompt: " + prompt)
+        agent_executor = AgentExecutor(
+            agent=agent, tools=self.__plugin_manager.get_tools(), verbose=True
+        )
+
         print("Agent executor: " + agent_executor.__str__())
 
-        invoke_response = agent_executor.invoke({
-            "input": prompt,
-            #"chat_history": prompt[:-1] if len(prompt) > 1 else []
-        })
+        invoke_response = agent_executor.invoke(
+            {
+                "input": prompt,
+                # "chat_history": prompt[:-1] if len(prompt) > 1 else []
+            }
+        )
 
         print("Base message: " + invoke_response.__str__())
 
@@ -70,7 +80,7 @@ class Gemini:
         # if(function_response.text == None):
         #     return "I'm sorry, An error occurred. Please try again."
 
-        return invoke_response['output']
+        return invoke_response["output"]
 
     def send_image(self, prompt: str, image: PIL.Image):
         response = self.__model.generate_content([prompt, image])
