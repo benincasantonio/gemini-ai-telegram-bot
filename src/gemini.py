@@ -38,14 +38,14 @@ class Gemini:
         print("Send Message")
         system_prompt = hub.pull("hwchase17/react")
         print("System prompt: " + system_prompt)
-        self.__agent = create_react_agent(llm=self.__llm, tools=self.__plugin_manager.get_tools(), prompt=system_prompt)
+        agent = create_react_agent(llm=self.__llm, tools=self.__plugin_manager.get_tools(), prompt=system_prompt)
 
         print('Agent created with prompt: ' + prompt)
-        self.__agent_executor = AgentExecutor(agent=self.__agent, tools=self.__plugin_manager.get_tools(), verbose=True)
+        agent_executor = AgentExecutor(agent=agent, tools=self.__plugin_manager.get_tools(), verbose=True)
         
-        print("Agent executor: " + self.__agent_executor.__str__())
+        print("Agent executor: " + agent_executor.__str__())
 
-        invoke_response = self.__agent_executor.invoke({
+        invoke_response = agent_executor.invoke({
             "input": prompt,
             #"chat_history": prompt[:-1] if len(prompt) > 1 else []
         })
