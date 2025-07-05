@@ -18,17 +18,20 @@ class Gemini:
     __plugin_manager = PluginManager()
 
     def __init__(self):
-        self.gemini_api_key = getenv('GEMINI_API_KEY')
+        self.gemini_api_key = getenv("GEMINI_API_KEY")
 
-        self.__model_name = getenv('GEMINI_MODEL_NAME', Config.DEFAULT_GEMINI_MODEL_NAME)
-
-        self.__model: ChatGoogleGenerativeAI = ChatGoogleGenerativeAI(
-            model=self.__model_name,
-            temperature= 0.5,
-            google_api_key=self.gemini_api_key
+        self.__model_name = getenv(
+            "GEMINI_MODEL_NAME", Config.DEFAULT_GEMINI_MODEL_NAME
         )
 
-        prompt = hub.pull('hwchase17/react')
+        self.__model: ChatGoogleGenerativeAI = ChatGoogleGenerativeAI(
+            model=self.__model_name, temperature=0.5, google_api_key=self.gemini_api_key
+        )
+
+        prompt = (
+            "You are a helpful assistant. "
+            "You may not need to use tools for every query - the user may just want to chat!"
+        )
 
         self.__agent = create_react_agent(
             llm=self.__model,
@@ -37,28 +40,19 @@ class Gemini:
         )
 
         self.__agent_executor = AgentExecutor(
-            agent=self.__agent,
-            tools=self.__plugin_manager.get_tools(),
-            verbose=True
+            agent=self.__agent, tools=self.__plugin_manager.get_tools(), verbose=True
         )
-        print('Setup Agent')
-        
-
+        print("Setup Agent")
 
     def get_model(self):
         return self.__model
 
     def send_message(self, prompt: LanguageModelInput) -> str:
-        base_message = self.__agent_executor.invoke(
-            input={
-                "messages": prompt
-            }
-        )
+        base_message = self.__agent_executor.invoke(input={"messages": prompt})
 
+        # function_request = chat.send_message(prompt, tools=self.__plugin_manager.get_tools())
 
-        #function_request = chat.send_message(prompt, tools=self.__plugin_manager.get_tools())
-        
-        #print("Function Request: " + function_request.__str__())
+        # print("Function Request: " + function_request.__str__())
 
         # function_call = function_request.candidates[0].content.parts[0].function_call
         #
@@ -75,7 +69,6 @@ class Gemini:
         #     return "I'm sorry, An error occurred. Please try again."
 
         return base_message.text()
-    
 
     def send_image(self, prompt: str, image: PIL.Image):
         response = self.__model.generate_content([prompt, image])
