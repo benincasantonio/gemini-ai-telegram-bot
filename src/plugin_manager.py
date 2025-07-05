@@ -1,7 +1,5 @@
 from .plugins.weather_plugin import WeatherPlugin
 from .plugins.date_time_plugin import DateTimePlugin
-import google.ai.generativelanguage as glm
-from google.generativeai import ChatSession
 from langchain_core.tools import Tool
 
 
