@@ -28,6 +28,13 @@ class Gemini:
             model=self.__model_name, temperature=0.5, google_api_key=self.gemini_api_key
         )
 
+        
+        print("Setup Agent")
+
+    def get_model(self):
+        return self.__model
+
+    def send_message(self, prompt: LanguageModelInput) -> str:
         prompt = (
             "You are a helpful assistant. "
             "You may not need to use tools for every query - the user may just want to chat!"
@@ -42,12 +49,7 @@ class Gemini:
         self.__agent_executor = AgentExecutor(
             agent=self.__agent, tools=self.__plugin_manager.get_tools(), verbose=True
         )
-        print("Setup Agent")
-
-    def get_model(self):
-        return self.__model
-
-    def send_message(self, prompt: LanguageModelInput) -> str:
+        
         base_message = self.__agent_executor.invoke(input={"messages": prompt})
 
         # function_request = chat.send_message(prompt, tools=self.__plugin_manager.get_tools())
