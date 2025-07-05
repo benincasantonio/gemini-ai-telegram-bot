@@ -7,7 +7,7 @@ from .config import Config
 from .plugin_manager import PluginManager
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain import hub
-from langchain.agents import create_react_agent
+from langchain.agents import create_react_agent, AgentExecutor
 
 
 class Gemini:
@@ -35,6 +35,13 @@ class Gemini:
             tools=self.__plugin_manager.get_tools(),
             prompt=prompt,
         )
+
+        self.__agent_executor = AgentExecutor(
+            agent=self.__agent,
+            tools=self.__plugin_manager.get_tools(),
+            verbose=True
+        )
+        print('Setup Agent')
         
 
 
@@ -42,7 +49,7 @@ class Gemini:
         return self.__model
 
     def send_message(self, prompt: LanguageModelInput) -> str:
-        base_message = self.__agent.invoke(
+        base_message = self.__agent_executor.invoke(
             input={
                 "messages": prompt
             }
