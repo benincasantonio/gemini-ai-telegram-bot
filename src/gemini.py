@@ -24,7 +24,7 @@ class Gemini:
             "GEMINI_MODEL_NAME", Config.DEFAULT_GEMINI_MODEL_NAME
         )
 
-        self.__model: ChatGoogleGenerativeAI = ChatGoogleGenerativeAI(
+        self.__llm: ChatGoogleGenerativeAI = ChatGoogleGenerativeAI(
             model=self.__model_name, temperature=0.5, google_api_key=self.gemini_api_key
         )
 
@@ -40,17 +40,12 @@ class Gemini:
             "You may not need to use tools for every query - the user may just want to chat!"
         )
 
-        self.__agent = create_react_agent(
-            llm=self.__model,
-            tools=self.__plugin_manager.get_tools(),
-            prompt=prompt,
-        )
+        self.__agent = create_react_agent(model=self.__llm, tools=self.__plugin_manager.get_tools(), prompt=prompt)
 
-        self.__agent_executor = AgentExecutor(
-            agent=self.__agent, tools=self.__plugin_manager.get_tools(), verbose=True
-        )
-        
-        base_message = self.__agent_executor.invoke(input={"messages": prompt})
+
+        base_message = self.__agent.invoke({
+            "messages": prompt,
+        })
 
         # function_request = chat.send_message(prompt, tools=self.__plugin_manager.get_tools())
 
