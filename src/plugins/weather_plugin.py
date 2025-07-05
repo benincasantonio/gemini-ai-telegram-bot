@@ -46,10 +46,10 @@ class WeatherPlugin:
     def get_weather(city: str, date_time: str = datetime.now().strftime('%d-%m-%Y'), unit: str = 'celsius') -> str:
         print("City: " + city)
         print("Unit: " + unit)
-        print("Date and time: " + date_time)
+        print("Date and time: " + date_time.__str__())
         mgr = owm.weather_manager()
 
-        print("DATE: " + date_time)
+        print("DATE: " + date_time.__str__())
 
         parsed_date = dateparser.parse(date_time)
 
