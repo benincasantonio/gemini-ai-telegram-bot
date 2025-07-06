@@ -23,21 +23,30 @@ class DateTimePlugin:
         return StructuredTool(
             name=self.__name,
             description=self.__description,
-            func=get_date_time,
+            func=get_date_time_tool,
             args_schema=DateTimeArgSchema,
             return_direct=True,
         )
 
+def get_date_time_tool(**kwargs) -> str:
+    """
+    Wrapper function to call get_date_time with keyword arguments.
+    This is necessary to match the StructuredTool signature.
+    """
+    if 'time_zone' in kwargs and isinstance(kwargs['time_zone'], str):
+        time_zone = kwargs['time_zone']
+    elif 'time_zone' in kwargs and isinstance(kwargs['time_zone'], list):
+        time_zone = kwargs['time_zone'][0]
+    elif 'time_zone' in kwargs and isinstance(kwargs['time_zone'], dict):
+        time_zone = kwargs['time_zone'].get('time_zone', "Europe/Rome")
+    else:
+        time_zone = "Europe/Rome"
 
+    print("Calling get_date_time with time_zone:", time_zone)
+    return get_date_time(time_zone)
 
 def get_date_time(time_zone = "Europe/Rome") -> str:
     try:
-    #GEMINI seems to send it as a dictionary, so we need to handle that case
-        if isinstance(time_zone, dict):
-            time_zone = time_zone.get("time_zone", "Europe/Rome")
-        elif not isinstance(time_zone, str):
-            raise ValueError("time_zone must be a string or a dictionary with 'time_zone' key.")
-        
         print("TimeZone:", time_zone)
         return datetime.now(timezone(time_zone)).strftime("%Y-%m-%d %H:%M:%S")
     except Exception as e:
