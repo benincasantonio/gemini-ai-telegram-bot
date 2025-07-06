@@ -30,7 +30,7 @@ class DateTimePlugin:
 
 
 
-def get_date_time(time_zone = "Europe/Rome", **kwargs) -> str:
+def get_date_time(time_zone = "Europe/Rome") -> str:
     try:
     #GEMINI seems to send it as a dictionary, so we need to handle that case
         if isinstance(time_zone, dict):
