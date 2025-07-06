@@ -30,12 +30,16 @@ class DateTimePlugin:
 
 
 
-def get_date_time(time_zone = "Europe/Rome") -> str:
+def get_date_time(time_zone = "Europe/Rome", **kwargs) -> str:
+    try:
     #GEMINI seems to send it as a dictionary, so we need to handle that case
-    if isinstance(time_zone, dict):
-        time_zone = time_zone.get("time_zone", "Europe/Rome")
-    elif not isinstance(time_zone, str):
-        raise ValueError("time_zone must be a string or a dictionary with 'time_zone' key.")
-    
-    print("TimeZone:", time_zone)
-    return datetime.now(timezone(time_zone)).strftime("%Y-%m-%d %H:%M:%S")
+        if isinstance(time_zone, dict):
+            time_zone = time_zone.get("time_zone", "Europe/Rome")
+        elif not isinstance(time_zone, str):
+            raise ValueError("time_zone must be a string or a dictionary with 'time_zone' key.")
+        
+        print("TimeZone:", time_zone)
+        return datetime.now(timezone(time_zone)).strftime("%Y-%m-%d %H:%M:%S")
+    except Exception as e:
+        print("Error in get_date_time:", e)
+        return "Error in getting date and time. Please check the time zone format."
