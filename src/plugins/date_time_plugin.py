@@ -28,22 +28,32 @@ class DateTimePlugin:
             return_direct=True,
         )
 
-def get_date_time_tool(**kwargs) -> str:
+def get_date_time_tool(*args, **kwargs) -> str:
     """
     Wrapper function to call get_date_time with keyword arguments.
     This is necessary to match the StructuredTool signature.
     """
-    if 'time_zone' in kwargs and isinstance(kwargs['time_zone'], str):
-        time_zone = kwargs['time_zone']
-    elif 'time_zone' in kwargs and isinstance(kwargs['time_zone'], list):
-        time_zone = kwargs['time_zone'][0]
-    elif 'time_zone' in kwargs and isinstance(kwargs['time_zone'], dict):
-        time_zone = kwargs['time_zone'].get('time_zone', "Europe/Rome")
-    else:
-        time_zone = "Europe/Rome"
+    print("ARGS:", args)
+    print("KWARGS:", kwargs)
 
-    print("Calling get_date_time with time_zone:", time_zone)
-    return get_date_time(time_zone)
+    # Default fallback
+    time_zone = "Europe/Rome"
+
+    # Se è passato come argomento posizionale
+    if args and isinstance(args[0], str):
+        time_zone = args[0]
+    # Se è passato come kwargs
+    elif 'time_zone' in kwargs:
+        tz = kwargs['time_zone']
+        if isinstance(tz, str):
+            time_zone = tz
+        elif isinstance(tz, list):
+            time_zone = tz[0]
+        elif isinstance(tz, dict):
+            time_zone = tz.get('time_zone', time_zone)
+
+    print("Final timezone:", time_zone)
+    return datetime.now(timezone(time_zone)).strftime("%Y-%m-%d %H:%M:%S")
 
 def get_date_time(time_zone = "Europe/Rome") -> str:
     try:
