@@ -86,13 +86,13 @@ Question: {input}
         messages = [HumanMessage(role="user", content=prompt)]
 
         print("Messages: " + messages.__str__())
-
+        print("tools: " + self.__plugin_manager.get_tools().__str__())
         invoke_response = self.__agent_executor.invoke(
             {
                 "input": prompt,
                 "chat_history": chat_history,
                 "agent_scratchpad": "",
-                "tools": self.__plugin_manager.get_tools(),
+                "tools": self.__plugin_manager.get_tools().__str__(),
                 "tool_names": [tool.name for tool in self.__plugin_manager.get_tools()]
             }
         )
