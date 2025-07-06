@@ -69,6 +69,7 @@ Question: {input}
             agent=self.__agent,
             tools=self.__plugin_manager.get_tools(),
             verbose=True,
+            handle_parsing_errors=True,
         )
 
         print("Setup Agent")
