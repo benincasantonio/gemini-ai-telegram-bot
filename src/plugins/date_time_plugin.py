@@ -26,7 +26,6 @@ class DateTimePlugin:
             return_direct=True,
         )
 
-    @staticmethod
-    def get_date_time(time_zone="Europe/Rome") -> str:
+    def get_date_time(self, time_zone: str ="Europe/Rome") -> str:
         print("TimeZone" + time_zone)
         return datetime.now(timezone(time_zone)).strftime("%Y-%m-%d %H:%M:%S")
