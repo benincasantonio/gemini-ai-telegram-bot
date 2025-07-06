@@ -27,6 +27,7 @@ class Gemini:
 
         self.__llm: ChatGoogleGenerativeAI = ChatGoogleGenerativeAI(
             model=self.__model_name, temperature=0.5, google_api_key=self.gemini_api_key
+            tools=self.__plugin_manager.get_tools(),
         )
 
         print("Setup Agent")
@@ -36,12 +37,12 @@ class Gemini:
 
     def send_message(self, prompt: str, chat_history) -> str:
         print("Sending message to Gemini: " + prompt)
-        # self.__llm.bind_tools(self.__plugin_manager.get_tools())
+        self.__llm.bind_tools(self.__plugin_manager.get_tools())
 
         print("Tools Binded")
 
         invoke_response = self.__llm.invoke(
-            prompt, chat_history=chat_history, tools=self.__plugin_manager.get_tools()
+            prompt, chat_history=chat_history
         )
 
         # get first invoke response since it is a tuple
