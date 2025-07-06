@@ -63,7 +63,7 @@ class Gemini:
         # if(function_response.text == None):
         #     return "I'm sorry, An error occurred. Please try again."
 
-        return invoke_response["output"]
+        return invoke_response.content
 
     def send_image(self, prompt: str, image: PIL.Image):
         response = self.__model.generate_content([prompt, image])
