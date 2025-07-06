@@ -36,22 +36,16 @@ class Gemini:
         return self.__llm
 
     def send_message(self, prompt: str, chat_history) -> str:
-        print("Sending message to Gemini: " + prompt)
-        self.__llm.bind_tools(self.__plugin_manager.get_tools())
 
         print("Tools Binded")
 
-        messages = chat_history + [
-            HumanMessage(
-                role="user",
-                content=prompt
-            )
-        ]
+        messages = chat_history + [HumanMessage(role="user", content=prompt)]
 
         print("Messages: " + messages.__str__())
 
-
-        invoke_response = self.__llm.invoke(messages)
+        invoke_response = self.__llm.invoke(
+            messages, tools=self.__plugin_manager.get_tools()
+        )
 
         # get first invoke response since it is a tuple
         if isinstance(invoke_response, tuple):
