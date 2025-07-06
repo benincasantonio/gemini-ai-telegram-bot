@@ -9,6 +9,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain import hub
 from langchain.agents import create_react_agent, AgentExecutor
 from langchain_core.prompts import PromptTemplate
+from langchain_core.messages import HumanMessage
 
 
 class Gemini:
@@ -40,9 +41,17 @@ class Gemini:
 
         print("Tools Binded")
 
-        invoke_response = self.__llm.invoke(
-            prompt, chat_history=chat_history
-        )
+        messages = chat_history + [
+            HumanMessage(
+                role="user",
+                content=prompt
+            )
+        ]
+
+        print("Messages: " + messages.__str__())
+
+
+        invoke_response = self.__llm.invoke(messages)
 
         # get first invoke response since it is a tuple
         if isinstance(invoke_response, tuple):
