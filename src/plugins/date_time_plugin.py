@@ -22,7 +22,6 @@ class DateTimePlugin:
             name=self.__name,
             description=self.__description,
             func=get_date_time,
-            args_schema=DateTimeArgSchema,
             return_direct=True,
         )
 
