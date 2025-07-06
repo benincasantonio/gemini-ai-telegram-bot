@@ -86,7 +86,11 @@ Question: {input}
 
         invoke_response = self.__agent_executor.invoke(
             {
-                "messages": messages,
+                "input": prompt,
+                "chat_history": chat_history,
+                "agent_scratchpad": "",
+                "tools": self.__plugin_manager.get_tools(),
+                "tool_names": [tool.name for tool in self.__plugin_manager.get_tools()]
             }
         )
 
