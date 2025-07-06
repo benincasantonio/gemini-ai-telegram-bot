@@ -59,6 +59,8 @@ Question: {input}
 """
         )
 
+        print("Prompt Template: " + prompt_template.__str__())
+
         self.__agent = create_react_agent(
             llm=self.__llm,
             prompt=prompt_template,
