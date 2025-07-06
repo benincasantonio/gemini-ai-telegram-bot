@@ -23,40 +23,17 @@ class DateTimePlugin:
         return StructuredTool(
             name=self.__name,
             description=self.__description,
-            func=get_date_time_tool,
+            func=get_date_time,
             args_schema=DateTimeArgSchema,
             return_direct=True,
         )
 
-def get_date_time_tool(*args, **kwargs) -> str:
-    """
-    Wrapper function to call get_date_time with keyword arguments.
-    This is necessary to match the StructuredTool signature.
-    """
-    print("ARGS:", args)
-    print("KWARGS:", kwargs)
-
-    # Default fallback
-    time_zone = "Europe/Rome"
-
-    # Se è passato come argomento posizionale
-    if args and isinstance(args[0], str):
-        time_zone = args[0]
-    # Se è passato come kwargs
-    elif 'time_zone' in kwargs:
-        tz = kwargs['time_zone']
-        if isinstance(tz, str):
-            time_zone = tz
-        elif isinstance(tz, list):
-            time_zone = tz[0]
-        elif isinstance(tz, dict):
-            time_zone = tz.get('time_zone', time_zone)
-
-    print("Final timezone:", time_zone)
-    return datetime.now(timezone(time_zone)).strftime("%Y-%m-%d %H:%M:%S")
-
-def get_date_time(time_zone = "Europe/Rome") -> str:
+def get_date_time(time_zone: str) -> str:
     try:
+        if not time_zone:
+            time_zone = "Europe/Rome"
+
+
         print("TimeZone:", time_zone)
         return datetime.now(timezone(time_zone)).strftime("%Y-%m-%d %H:%M:%S")
     except Exception as e:
