@@ -7,7 +7,7 @@ from langchain_core.tools import StructuredTool
 class DateTimeArgSchema(BaseModel):
     time_zone: str = Field(
         default="Europe/Rome",
-        description="The timezone to use for the date and time.",
+        description="The timezone to use for the date and time. E.g. Europe/Rome, America/New_York, Asia/Tokyo.",
         examples=["Europe/Rome", "America/New_York", "Asia/Tokyo"]
     )
 

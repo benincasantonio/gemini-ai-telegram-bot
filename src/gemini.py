@@ -40,9 +40,11 @@ class Gemini:
 
         print("Tools Binded")
 
-        invoke_response = (
-            self.__llm.invoke(prompt, tools=self.__plugin_manager.get_tools()),
-        )
+        invoke_response = self.__llm.invoke(prompt, tools=self.__plugin_manager.get_tools())
+
+        # get first invoke response since it is a tuple
+        if isinstance(invoke_response, tuple):
+            invoke_response = invoke_response[0]
 
         print("Base message: " + invoke_response.__str__())
 
