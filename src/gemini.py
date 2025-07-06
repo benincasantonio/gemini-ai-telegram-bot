@@ -27,7 +27,6 @@ class Gemini:
 
         self.__llm: ChatGoogleGenerativeAI = ChatGoogleGenerativeAI(
             model=self.__model_name, temperature=0.5, google_api_key=self.gemini_api_key
-            tools=self.__plugin_manager.get_tools(),
         )
 
         print("Setup Agent")
