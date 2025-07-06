@@ -30,6 +30,47 @@ class Gemini:
             model=self.__model_name, temperature=0.5, google_api_key=self.gemini_api_key
         )
 
+        prompt_template = PromptTemplate.from_template(
+            """
+You are a friendly and intelligent assistant. You can use external tools to help answer user questions when necessary.
+
+You have access to the following tools:
+
+{tools}
+
+Use the following format:
+
+Question: the input question you must answer  
+Thought: you should always think about what to do  
+Action: the action to take, should be one of [{tool_names}]  
+Action Input: the input to the action  
+Observation: the result of the action  
+... (this Thought/Action/Action Input/Observation can repeat N times)  
+Thought: I now know the final answer  
+Final Answer: the final answer to the original input question
+
+Begin!
+
+{chat_history}
+
+Question: {input}
+{agent_scratchpad}
+
+"""
+        )
+
+        self.__agent = create_react_agent(
+            llm=self.__llm,
+            prompt=prompt_template,
+            tools=self.__plugin_manager.get_tools()
+        )
+
+        self.__agent_executor = AgentExecutor(
+            agent=self.__agent,
+            tools=self.__plugin_manager.get_tools(),
+            verbose=True,
+        )
+
         print("Setup Agent")
 
     def get_llm(self):
@@ -39,12 +80,14 @@ class Gemini:
 
         print("Tools Binded")
 
-        messages = chat_history + [HumanMessage(role="user", content=prompt)]
+        messages = [HumanMessage(role="user", content=prompt)]
 
         print("Messages: " + messages.__str__())
 
-        invoke_response = self.__llm.invoke(
-            messages, tools=self.__plugin_manager.get_tools()
+        invoke_response = self.__agent_executor.invoke(
+            {
+                "messages": messages,
+            }
         )
 
         # get first invoke response since it is a tuple
