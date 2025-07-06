@@ -35,18 +35,12 @@ class Gemini:
         return self.__llm
 
     def send_message(self, prompt: str, chat_history) -> str:
+        print("Sending message to Gemini: " + prompt)
         self.__llm.bind_tools(self.__plugin_manager.get_tools())
 
-        invoke_response = self.__llm.invoke(
-            LanguageModelInput(
-                messages=[
-                    {
-                        "role": "user",
-                        "content": prompt,
-                    }
-                ],
-                chat_history=chat_history,
-            )
+        print("Tools Binded")
+
+        invoke_response = self.__llm.invoke(prompt
         )
 
         print("Base message: " + invoke_response.__str__())
