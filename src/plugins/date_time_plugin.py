@@ -21,11 +21,13 @@ class DateTimePlugin:
         return StructuredTool(
             name=self.__name,
             description=self.__description,
-            func=self.get_date_time,
+            func=get_date_time,
             args_schema=DateTimeArgSchema,
             return_direct=True,
         )
 
-    def get_date_time(self, time_zone: str ="Europe/Rome") -> str:
-        print("TimeZone" + time_zone)
-        return datetime.now(timezone(time_zone)).strftime("%Y-%m-%d %H:%M:%S")
+
+
+def get_date_time(time_zone: str = "Europe/Rome") -> str:
+    print("TimeZone:", time_zone)
+    return datetime.now(timezone(time_zone)).strftime("%Y-%m-%d %H:%M:%S")
