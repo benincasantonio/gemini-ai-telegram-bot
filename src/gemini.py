@@ -30,34 +30,34 @@ class Gemini:
             model=self.__model_name, temperature=0.5, google_api_key=self.gemini_api_key
         )
 
-        prompt_template = PromptTemplate.from_template(
-            """
-You are a friendly and intelligent assistant. You can use external tools to help answer user questions when necessary.
+        prompt_template = hub.pull("hwchase17/react")
 
-You have access to the following tools:
+#         prompt_template = PromptTemplate.from_template(
+#             """
+# You are a friendly and intelligent assistant. You can use external tools to help answer user questions when necessary.
 
-{tools}
+# You have access to the following tools:
 
-Use the following format:
+# {tools}
 
-Question: the input question you must answer  
-Thought: you should always think about what to do  
-Action: the action to take, should be one of [{tool_names}]  
-Action Input: the input to the action, should be a valid JSON object with the parameters
-Observation: the result of the action  
-... (this Thought/Action/Action Input/Observation can repeat N times)  
-Thought: I now know the final answer  
-Final Answer: the final answer to the original input question
+# Use the following format:
 
-Begin!
+# Question: the input question you must answer  
+# Thought: you should always think about what to do  
+# Action: the action to take, should be one of [{tool_names}]  
+# Action Input: the input to the action, should be a valid JSON object with the parameters
+# Observation: the result of the action  
+# ... (this Thought/Action/Action Input/Observation can repeat N times)  
+# Thought: I now know the final answer  
+# Final Answer: the final answer to the original input question
 
-{chat_history}
+# Begin
 
-Question: {input}
-{agent_scratchpad}
+# Question: {input}
+# {agent_scratchpad}
 
-"""
-        )
+# """
+#         )
 
         print("Prompt Template: " + prompt_template.__str__())
 
