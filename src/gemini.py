@@ -30,7 +30,8 @@ class Gemini:
             model=self.__model_name, temperature=0.5, google_api_key=self.gemini_api_key
         )
 
-        prompt_template = hub.pull("hwchase17/react")
+        prompt_template = hub.pull("hwchase17/react-chat")
+
 
 #         prompt_template = PromptTemplate.from_template(
 #             """
