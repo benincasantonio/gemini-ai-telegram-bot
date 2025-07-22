@@ -2,6 +2,7 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 from pytz import timezone
 from langchain_core.tools import StructuredTool
+import ast
 
 
 class DateTimeArgSchema(BaseModel):
@@ -27,6 +28,21 @@ class DateTimePlugin:
             args_schema=DateTimeArgSchema,
             return_direct=True,
         )
+
+def sanitize_time_zone(time_zone: str) -> str:
+    """Since gemini sends the timezone with other characters, we need to sanitize it."""
+    if not time_zone:
+        return "Europe/Rome"
+
+    #sometimes it is returned as python dict in a string format, so we need to parse it
+    try:
+        parsed = ast.literal_eval(time_zone)
+        return parsed.get('time_zone', 'Europe/Rome')
+    except (ValueError, SyntaxError):
+        raise ValueError(f"Invalid time zone format. For {time_zone}")
+
+
+
 
 def get_date_time(time_zone: str) -> str:
     try:
