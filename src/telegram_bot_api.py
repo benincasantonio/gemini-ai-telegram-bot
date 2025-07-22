@@ -95,7 +95,7 @@ async def webhook():
             db.session.commit()
         else:
             history = []
-            if(len(session.messages) > 0):
+            if len(session.messages) > 0:
                 for message in session.messages:
                     history.append({
                         "role": message.role,
