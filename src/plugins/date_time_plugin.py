@@ -1,6 +1,6 @@
 from datetime import datetime
 from pytz import timezone
-from google.generativeai.types import FunctionDeclaration, Tool
+from google.genai.types import FunctionDeclaration, Tool, Schema, Type
 
 
 class DateTimePlugin:
@@ -8,15 +8,17 @@ class DateTimePlugin:
     def __init__(self):
         self.__name: str = "get_date_time"
         self.__description: str = "A plugin that returns the current date and time."
-        self.__parameters: dict[str, any] = {
-            "type": "object",
-            "properties": {
+
+        self.__parameters = Schema(
+            type=Type.OBJECT,
+            properties={
                 "time_zone": {
-                    "type": "string",
-                    "description": "The timezone to use for the date and time."
+                    "type": Type.STRING,
+                    "description": "The timezone to use for the date and time.",
+                    "default": "Europe/Rome"
                 }
             }
-        }
+        )
 
     def function_declaration(self):
         return FunctionDeclaration(
