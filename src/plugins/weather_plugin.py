@@ -1,4 +1,4 @@
-from google.generativeai.types import FunctionDeclaration, Tool
+from google.genai.types import FunctionDeclaration, Tool, Schema, Type
 from pyowm import OWM
 from dotenv import load_dotenv
 from os import getenv
@@ -12,24 +12,24 @@ class WeatherPlugin:
     def __init__(self):
         self.name: str = "get_weather"
         self.description: str = "Get the weather of a city at a particular date and time. If the date is today, the current weather will be returned. Otherwise, the weather at the specified date and time will be returned. If the user does not specify a date and time, the current date and time will be used. If the user types a date like 'tomorrow' or 'in 2 days', you should convert it to the appropriate date. If the user does not specify a unit, the temperature will be returned in Celsius. If the user specifies a unit, the temperature will be returned in that unit."
-        self.parameters: dict[str, any] = {
-            "type": "object",
-            "properties": {
+        self.parameters = Schema(
+            type=Type.OBJECT,
+            properties={
                 "city": {
-                    "type": "string",
+                    "type": Type.STRING,
                     "description": "The city name."
                 },
                 "date_time": {
-                    "type": "string",
+                    "type": Type.STRING,
                     "description": "The datetime timestamp for the weather."
                 },
                 "unit": {
-                    "type": "string",
+                    "type": Type.STRING,
                     "description": "The unit of temperature",
                     "enum": ["celsius", "fahrenheit"]
                 }
             }
-        }
+        )
 
     def function_declaration(self):
         return FunctionDeclaration(
@@ -45,14 +45,14 @@ class WeatherPlugin:
     
 
     @staticmethod
-    def get_weather(city: str, date_time: str = datetime.now().strftime('%d-%m-%Y'), unit: str = 'celsius') -> str:
+    def get_weather(city: str, date_time: str = datetime.now().strftime('%d-%m-%Y'), unit: str = 'celsius'):
         mgr = owm.weather_manager()
 
         print("DATE: " + date_time)
 
         parsed_date = dateparser.parse(date_time)
 
-        if(parsed_date == None):
+        if parsed_date is None:
             return "Invalid date and time format. Please enter a valid date and time format."
 
         date = parsed_date.strftime('%Y-%m-%d %H:%M:%S')
