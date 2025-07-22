@@ -82,8 +82,9 @@ async def webhook():
             if update.message.caption:
                 prompt = update.message.caption
             print("Prompt is ", prompt)
-
-            text = gemini.send_image(prompt, image)
+            # TODO Retrieve the chat history
+            chat = gemini.get_chat(history=[])
+            text = gemini.send_image(prompt, image, chat)
 
             # Add the user message to the chat session
             chat_message = ChatMessage(chat_id=chat_id, text=prompt, date=update.message.date, role="user")
@@ -95,7 +96,7 @@ async def webhook():
             db.session.commit()
         else:
             history = []
-            if(len(session.messages) > 0):
+            if len(session.messages) > 0:
                 for message in session.messages:
                     history.append({
                         "role": message.role,
