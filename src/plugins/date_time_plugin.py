@@ -30,11 +30,11 @@ class DateTimePlugin:
 
 def get_date_time(time_zone: str) -> str:
     try:
+        print("TimeZone:", time_zone)
         if not time_zone:
             time_zone = "Europe/Rome"
 
 
-        print("TimeZone:", time_zone)
         return datetime.now(timezone(time_zone)).strftime("%Y-%m-%d %H:%M:%S")
     except Exception as e:
         print("Error in get_date_time:", e)
