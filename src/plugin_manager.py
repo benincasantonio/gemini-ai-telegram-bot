@@ -33,14 +33,13 @@ class PluginManager:
             print('RESULT: ' + str(result))
 
             function_response = chat.send_message(
-                message=[
-                    PartDict(
+                message=PartDict(
                         function_response=FunctionResponseDict(
                             name=function_call.name,
                             response={'result': result}
                         )
                     )
-                ]
+
             )
             print('FUNCTION RESPONSE: ' + str(function_response))
             return function_response
