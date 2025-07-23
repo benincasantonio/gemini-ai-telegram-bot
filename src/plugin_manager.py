@@ -2,7 +2,7 @@ from .plugins.weather_plugin import WeatherPlugin
 from .plugins.date_time_plugin import DateTimePlugin
 from google.genai.chats import Chat
 
-from google.genai.types import PartDict, FunctionResponseDict, FunctionCall
+from google.genai.types import PartDict, FunctionResponseDict, FunctionCall, Part
 
 
 class PluginManager:
@@ -30,17 +30,17 @@ class PluginManager:
             args = {key: value for key, value in function_call.args.items()}
             result = function_declarations[function_call.name](**args)
 
-            print('RESULT: ' + str(result))
+            function_response_part = Part.from_function_response(
+                name=function_call.name,
+                response={
+                    "result": result
+                }
+            )
 
             function_response = chat.send_message(
-                message=PartDict(
-                        function_response=FunctionResponseDict(
-                            name=function_call.name,
-                            response={'result': result}
-                        )
-                    )
-
+                message=function_response_part
             )
+
             print('FUNCTION RESPONSE: ' + str(function_response))
             return function_response
         else:
