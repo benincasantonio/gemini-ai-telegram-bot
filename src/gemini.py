@@ -52,7 +52,7 @@ class Gemini:
         if function_response.text is None:
             return "I'm sorry, An error occurred. Please try again."
 
-        return function_response.parts[0].text
+        return function_response.text
     
 
     def send_image(self, prompt: str, image: PIL.Image, chat: Chat) -> str:
