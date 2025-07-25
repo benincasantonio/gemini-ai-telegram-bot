@@ -1,7 +1,8 @@
 from .plugins.weather_plugin import WeatherPlugin
 from .plugins.date_time_plugin import DateTimePlugin
-import google.ai.generativelanguage as glm
-from google.generativeai import ChatSession
+from google.genai.chats import Chat
+
+from google.genai.types import PartDict, FunctionResponseDict, FunctionCall, Part
 
 
 class PluginManager:
@@ -22,25 +23,24 @@ class PluginManager:
 
         }
 
-    def get_function_response(self, function_call: glm.FunctionCall, chat: ChatSession):
+    def get_function_response(self, function_call: FunctionCall, chat: Chat):
         function_declarations = self.get_function_declarations()
 
         if function_call.name in function_declarations:
             args = {key: value for key, value in function_call.args.items()}
             result = function_declarations[function_call.name](**args)
 
-            print('RESULT: ' + str(result))
+            function_response_part = Part.from_function_response(
+                name=function_call.name,
+                response={
+                    "result": result
+                }
+            )
 
             function_response = chat.send_message(
-                content=[
-                    glm.Part(
-                        function_response=glm.FunctionResponse(
-                            name=function_call.name,
-                            response={'result': result}
-                        )
-                    )
-                ]
+                message=function_response_part
             )
+
             print('FUNCTION RESPONSE: ' + str(function_response))
             return function_response
         else:

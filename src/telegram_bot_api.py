@@ -62,7 +62,17 @@ async def webhook():
             message = await telegram_app.bot.send_message(chat_id=chat_id, text="Processing your request...")
             message_id = message.message_id
 
-        
+        history = []
+        if len(session.messages) > 0:
+            for message in session.messages:
+                history.append({
+                    "role": message.role,
+                    "parts": [
+                        {
+                            "text": message.text
+                        }
+                    ]
+                })
         if update.message.photo:
             
             app.logger.info("Image received")
@@ -82,8 +92,8 @@ async def webhook():
             if update.message.caption:
                 prompt = update.message.caption
             print("Prompt is ", prompt)
-
-            text = gemini.send_image(prompt, image)
+            chat = gemini.get_chat(history=history)
+            text = gemini.send_image(prompt, image, chat)
 
             # Add the user message to the chat session
             chat_message = ChatMessage(chat_id=chat_id, text=prompt, date=update.message.date, role="user")
@@ -94,19 +104,9 @@ async def webhook():
             session.messages.append(chat_message)
             db.session.commit()
         else:
-            history = []
-            if(len(session.messages) > 0):
-                for message in session.messages:
-                    history.append({
-                        "role": message.role,
-                        "parts": [
-                            {                                
-                                "text": message.text
-                            }
-                        ]
-                    })
+
             print("History: ", history.__str__())
-            chat = gemini.get_model().start_chat(history=history)
+            chat = gemini.get_chat(history=history)
             text = gemini.send_message(update.message.text, chat)
             
             # Add the user message to the chat session
