@@ -7,7 +7,10 @@ from os import getenv
 from io import BytesIO
 from PIL import Image
 from .enums import TelegramBotCommands
-from .flask_app import app, db, ChatMessage, ChatSession
+from .flask_app import app, db, ChatSession
+from .chat_service import ChatService
+
+chat_service = ChatService()
 
 
 @app.get('/')
@@ -53,8 +56,7 @@ async def webhook():
             await telegram_app.bot.send_message(chat_id=chat_id, text="Welcome to Gemini Bot. Send me a message or an image to get started.")
             return 'OK'
         if update.message.text == TelegramBotCommands.NEW_CHAT:
-            db.session.query(ChatMessage).filter_by(chat_id=session.id).delete()
-            db.session.commit()
+            chat_service.clear_chat_history(session.id)
 
             await telegram_app.bot.send_message(chat_id=chat_id, text="New chat started.")
             return 'OK'
@@ -62,17 +64,8 @@ async def webhook():
             message = await telegram_app.bot.send_message(chat_id=chat_id, text="Processing your request...")
             message_id = message.message_id
 
-        history = []
-        if len(session.messages) > 0:
-            for message in session.messages:
-                history.append({
-                    "role": message.role,
-                    "parts": [
-                        {
-                            "text": message.text
-                        }
-                    ]
-                })
+        history = chat_service.get_chat_history(session.id)
+
         if update.message.photo:
             
             app.logger.info("Image received")
@@ -95,28 +88,18 @@ async def webhook():
             chat = gemini.get_chat(history=history)
             text = gemini.send_image(prompt, image, chat)
 
-            # Add the user message to the chat session
-            chat_message = ChatMessage(chat_id=chat_id, text=prompt, date=update.message.date, role="user")
-            session.messages.append(chat_message)
-            db.session.commit()
-            # add the model response to the chat session
-            chat_message = ChatMessage(chat_id=chat_id, text=text, date=update.message.date, role="model")
-            session.messages.append(chat_message)
-            db.session.commit()
+            # Add user and model messages to the chat session
+            chat_service.add_message(session.id, prompt, update.message.date, "user")
+            chat_service.add_message(session.id, text, update.message.date, "model")
         else:
 
             print("History: ", history.__str__())
             chat = gemini.get_chat(history=history)
             text = gemini.send_message(update.message.text, chat)
             
-            # Add the user message to the chat session
-            chat_message = ChatMessage(chat_id=chat_id, text=update.message.text, date=update.message.date, role="user")
-            session.messages.append(chat_message)
-            db.session.commit()
-            # add the model response to the chat session
-            chat_message = ChatMessage(chat_id=chat_id, text=text, date=update.message.date, role="model")
-            session.messages.append(chat_message)
-            db.session.commit()
+            # Add user and model messages to the chat session
+            chat_service.add_message(session.id, update.message.text, update.message.date, "user")
+            chat_service.add_message(session.id, text, update.message.date, "model")
             
             print('Response: ', text)
         await telegram_app.bot.edit_message_text(chat_id= chat_id, text=escape(text), message_id=message_id, parse_mode="MarkdownV2")

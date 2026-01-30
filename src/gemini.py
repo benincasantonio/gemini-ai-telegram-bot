@@ -53,9 +53,10 @@ class Gemini:
             return "I'm sorry, An error occurred. Please try again."
 
         return function_response.text
-    
 
-    def send_image(self, prompt: str, image: PIL.Image, chat: Chat) -> str:
+
+    @staticmethod
+    def send_image(prompt: str, image: PIL.Image, chat: Chat) -> str:
         response = chat.send_message([prompt, image])
         print("Image response: " + response.text)
         return response.text
