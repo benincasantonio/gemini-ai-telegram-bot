@@ -23,6 +23,7 @@ class Gemini:
         self.__generation_config: GenerateContentConfigOrDict = types.GenerateContentConfig(
             temperature=0.5,
             tools=self.__plugin_manager.get_tools(),
+
         )
 
     def get_chat(self, history: list) -> Chat:
@@ -53,9 +54,10 @@ class Gemini:
             return "I'm sorry, An error occurred. Please try again."
 
         return function_response.text
-    
 
-    def send_image(self, prompt: str, image: PIL.Image, chat: Chat) -> str:
+
+    @staticmethod
+    def send_image(prompt: str, image: PIL.Image, chat: Chat) -> str:
         response = chat.send_message([prompt, image])
         print("Image response: " + response.text)
         return response.text
