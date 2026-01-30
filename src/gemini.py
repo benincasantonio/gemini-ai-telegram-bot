@@ -23,7 +23,6 @@ class Gemini:
         self.__generation_config: GenerateContentConfigOrDict = types.GenerateContentConfig(
             temperature=0.5,
             tools=self.__plugin_manager.get_tools(),
-
         )
 
     def get_chat(self, history: list) -> Chat:

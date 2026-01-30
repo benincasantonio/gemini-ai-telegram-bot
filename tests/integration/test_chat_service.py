@@ -58,7 +58,7 @@ def empty_session(test_app):
         session = ChatSession(chat_id=54321, messages=[])
         db.session.add(session)
         db.session.commit()
-        yield session
+        yield session.id
 
 
 class TestGetChatHistory:
@@ -141,6 +141,12 @@ class TestGetChatHistory:
             history = chat_service.get_chat_history(session_with_messages, limit=0)
             
             assert history == []
+    
+    def test_negative_limit_raises_error(self, test_app, chat_service, session_with_messages):
+        """Negative limit should raise ValueError."""
+        with test_app.app_context():
+            with pytest.raises(ValueError, match="limit must be non-negative"):
+                chat_service.get_chat_history(session_with_messages, limit=-1)
 
 
 class TestAddMessage:
@@ -149,10 +155,9 @@ class TestAddMessage:
     def test_adds_message_to_session(self, test_app, chat_service, empty_session):
         """Should add a message using session ID."""
         with test_app.app_context():
-            session = db.session.query(ChatSession).filter_by(chat_id=54321).first()
             message_date = datetime(2026, 1, 15, 10, 30, 0)
             
-            result = chat_service.add_message(session.id, "Hello world", message_date, "user")
+            result = chat_service.add_message(empty_session, "Hello world", message_date, "user")
             
             assert result is not None
             assert result.text == "Hello world"
@@ -162,35 +167,31 @@ class TestAddMessage:
     def test_message_persisted_to_database(self, test_app, chat_service, empty_session):
         """Message should be persisted to the database."""
         with test_app.app_context():
-            session = db.session.query(ChatSession).filter_by(chat_id=54321).first()
             message_date = datetime(2026, 1, 15, 10, 30, 0)
             
-            chat_service.add_message(session.id, "Test message", message_date, "model")
+            chat_service.add_message(empty_session, "Test message", message_date, "model")
             
             # Query the database directly
-            messages = db.session.query(ChatMessage).filter_by(chat_id=session.id).all()
+            messages = db.session.query(ChatMessage).filter_by(chat_id=empty_session).all()
             assert len(messages) == 1
             assert messages[0].text == "Test message"
     
     def test_returns_chat_message_instance(self, test_app, chat_service, empty_session):
         """Should return a ChatMessage instance."""
         with test_app.app_context():
-            session = db.session.query(ChatSession).filter_by(chat_id=54321).first()
-            
-            result = chat_service.add_message(session.id, "Test", datetime.now(), "user")
+            result = chat_service.add_message(empty_session, "Test", datetime.now(), "user")
             
             assert isinstance(result, ChatMessage)
     
     def test_multiple_messages_can_be_added(self, test_app, chat_service, empty_session):
         """Should be able to add multiple messages to same session."""
         with test_app.app_context():
-            session = db.session.query(ChatSession).filter_by(chat_id=54321).first()
             base_date = datetime(2026, 1, 15, 10, 0, 0)
             
-            chat_service.add_message(session.id, "User message", base_date, "user")
-            chat_service.add_message(session.id, "Model response", base_date + timedelta(seconds=1), "model")
+            chat_service.add_message(empty_session, "User message", base_date, "user")
+            chat_service.add_message(empty_session, "Model response", base_date + timedelta(seconds=1), "model")
             
-            messages = db.session.query(ChatMessage).filter_by(chat_id=session.id).all()
+            messages = db.session.query(ChatMessage).filter_by(chat_id=empty_session).all()
             assert len(messages) == 2
 
 
@@ -219,9 +220,7 @@ class TestClearChatHistory:
     def test_returns_zero_when_no_messages(self, test_app, chat_service, empty_session):
         """Should return 0 when session has no messages."""
         with test_app.app_context():
-            session = db.session.query(ChatSession).filter_by(chat_id=54321).first()
-            
-            deleted = chat_service.clear_chat_history(session.id)
+            deleted = chat_service.clear_chat_history(empty_session)
             
             assert deleted == 0
 

@@ -36,6 +36,9 @@ class ChatService:
         if limit is None:
             limit = self._max_history_messages
         
+        if limit < 0:
+            raise ValueError("limit must be non-negative")
+        
         # Query messages ordered by date descending, limited to N
         messages = (
             self._db.session.query(ChatMessage)
