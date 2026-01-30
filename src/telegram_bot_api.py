@@ -58,7 +58,6 @@ async def webhook():
         if update.message.text == TelegramBotCommands.NEW_CHAT:
             chat_service.clear_chat_history(session.id)
 
-
             await telegram_app.bot.send_message(chat_id=chat_id, text="New chat started.")
             return 'OK'
         else:

@@ -4,7 +4,7 @@ Implements query-time limiting to prevent unbounded context growth.
 """
 
 from datetime import datetime
-from .flask_app import db, ChatMessage, ChatSession
+from .flask_app import db, ChatMessage
 from .config import Config
 
 
