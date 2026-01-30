@@ -147,13 +147,12 @@ class TestAddMessage:
     """Tests for the add_message method."""
     
     def test_adds_message_to_session(self, test_app, chat_service, empty_session):
-        """Should add a message to the session."""
+        """Should add a message using session ID."""
         with test_app.app_context():
-            # Re-fetch session within context
             session = db.session.query(ChatSession).filter_by(chat_id=54321).first()
             message_date = datetime(2026, 1, 15, 10, 30, 0)
             
-            result = chat_service.add_message(session, "Hello world", message_date, "user")
+            result = chat_service.add_message(session.id, "Hello world", message_date, "user")
             
             assert result is not None
             assert result.text == "Hello world"
@@ -166,7 +165,7 @@ class TestAddMessage:
             session = db.session.query(ChatSession).filter_by(chat_id=54321).first()
             message_date = datetime(2026, 1, 15, 10, 30, 0)
             
-            chat_service.add_message(session, "Test message", message_date, "model")
+            chat_service.add_message(session.id, "Test message", message_date, "model")
             
             # Query the database directly
             messages = db.session.query(ChatMessage).filter_by(chat_id=session.id).all()
@@ -178,7 +177,7 @@ class TestAddMessage:
         with test_app.app_context():
             session = db.session.query(ChatSession).filter_by(chat_id=54321).first()
             
-            result = chat_service.add_message(session, "Test", datetime.now(), "user")
+            result = chat_service.add_message(session.id, "Test", datetime.now(), "user")
             
             assert isinstance(result, ChatMessage)
     
@@ -188,8 +187,8 @@ class TestAddMessage:
             session = db.session.query(ChatSession).filter_by(chat_id=54321).first()
             base_date = datetime(2026, 1, 15, 10, 0, 0)
             
-            chat_service.add_message(session, "User message", base_date, "user")
-            chat_service.add_message(session, "Model response", base_date + timedelta(seconds=1), "model")
+            chat_service.add_message(session.id, "User message", base_date, "user")
+            chat_service.add_message(session.id, "Model response", base_date + timedelta(seconds=1), "model")
             
             messages = db.session.query(ChatMessage).filter_by(chat_id=session.id).all()
             assert len(messages) == 2

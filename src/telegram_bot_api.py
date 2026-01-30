@@ -90,8 +90,8 @@ async def webhook():
             text = gemini.send_image(prompt, image, chat)
 
             # Add user and model messages to the chat session
-            chat_service.add_message(session, prompt, update.message.date, "user")
-            chat_service.add_message(session, text, update.message.date, "model")
+            chat_service.add_message(session.id, prompt, update.message.date, "user")
+            chat_service.add_message(session.id, text, update.message.date, "model")
         else:
 
             print("History: ", history.__str__())
@@ -99,8 +99,8 @@ async def webhook():
             text = gemini.send_message(update.message.text, chat)
             
             # Add user and model messages to the chat session
-            chat_service.add_message(session, update.message.text, update.message.date, "user")
-            chat_service.add_message(session, text, update.message.date, "model")
+            chat_service.add_message(session.id, update.message.text, update.message.date, "user")
+            chat_service.add_message(session.id, text, update.message.date, "model")
             
             print('Response: ', text)
         await telegram_app.bot.edit_message_text(chat_id= chat_id, text=escape(text), message_id=message_id, parse_mode="MarkdownV2")

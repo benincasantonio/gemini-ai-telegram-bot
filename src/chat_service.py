@@ -59,12 +59,12 @@ class ChatService:
         
         return history
     
-    def add_message(self, session: ChatSession, text: str, date: datetime, role: str) -> ChatMessage:
+    def add_message(self, session_id: int, text: str, date: datetime, role: str) -> ChatMessage:
         """
         Add a message to a chat session.
         
         Args:
-            session: The ChatSession to add the message to.
+            session_id: The chat session ID to add the message to.
             text: The message text content.
             date: The datetime of the message.
             role: The role of the sender ('user' or 'model').
@@ -73,12 +73,12 @@ class ChatService:
             The created ChatMessage instance.
         """
         chat_message = ChatMessage(
-            chat_id=session.id,
+            chat_id=session_id,
             text=text,
             date=date,
             role=role
         )
-        session.messages.append(chat_message)
+        self._db.session.add(chat_message)
         self._db.session.commit()
         return chat_message
     
