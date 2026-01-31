@@ -15,17 +15,37 @@ class Gemini:
         self.__plugin_manager = PluginManager()
         
         self.__model_name = getenv('GEMINI_MODEL_NAME', Config.DEFAULT_GEMINI_MODEL_NAME)
-        self.__client = genai.Client(
-            api_key=getenv('GEMINI_API_KEY')
-        ).aio
+        self.__api_key = getenv('GEMINI_API_KEY')
+        self.__client = None
+        self.__current_loop = None
 
         self.__generation_config: GenerateContentConfigOrDict = types.GenerateContentConfig(
             temperature=0.5,
             tools=self.__plugin_manager.get_tools(),
         )
+    
+    def _get_client(self):
+        """Get or create the async client for the current event loop.
+        
+        In serverless environments, the event loop can change between invocations
+        while the Gemini instance persists. This ensures we always use a client
+        bound to the current event loop.
+        """
+        import asyncio
+        try:
+            current_loop = asyncio.get_running_loop()
+        except RuntimeError:
+            current_loop = None
+        
+        # Recreate client if loop has changed or client doesn't exist
+        if self.__client is None or self.__current_loop is not current_loop:
+            self.__client = genai.Client(api_key=self.__api_key).aio
+            self.__current_loop = current_loop
+        
+        return self.__client
 
     def get_chat(self, history: list) -> AsyncChat:
-        return self.__client.chats.create(
+        return self._get_client().chats.create(
             model=self.__model_name,
             history=history,
             config=self.__generation_config,
