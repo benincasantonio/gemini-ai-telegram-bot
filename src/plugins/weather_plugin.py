@@ -13,7 +13,13 @@ from src.exceptions.weather_exceptions import (
     OpenWeatherMapError,
 )
 
-class WeatherPlugin: 
+class WeatherPlugin:
+    """Weather plugin for getting current and historical weather data.
+
+    This plugin uses OpenWeatherMap API to fetch weather information.
+    It should be used as an async context manager or properly closed when done.
+    """
+
     def __init__(self):
         self.openweathermap_service = OpenWeatherMapService(api_key=getenv('OWM_API_KEY'))
         self.name: str = "get_weather"
@@ -168,7 +174,19 @@ class WeatherPlugin:
                 "success": False,
                 "error": f"Unexpected error: {str(e)}"
             }
-        
-        
-    
 
+    async def close(self) -> None:
+        """Close the OpenWeatherMap service and cleanup resources.
+
+        This should be called when the plugin is no longer needed to
+        properly close HTTP connections and prevent resource leaks.
+        """
+        await self.openweathermap_service.close()
+
+    async def __aenter__(self) -> "WeatherPlugin":
+        """Async context manager entry."""
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
+        """Async context manager exit. Ensures cleanup of resources."""
+        await self.close()

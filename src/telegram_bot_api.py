@@ -10,6 +10,8 @@ from PIL import Image
 from .enums import TelegramBotCommands
 from .flask_app import app, db, ChatSession
 from .chat_service import ChatService
+import atexit
+import asyncio
 
 load_dotenv()
 
@@ -17,6 +19,28 @@ chat_service = ChatService()
 gemini = None
 
 _telegram_app = None
+
+
+def cleanup_resources():
+    """Cleanup resources on application shutdown.
+
+    This function is called automatically when the application exits
+    to ensure all HTTP connections are properly closed.
+    """
+    try:
+        loop = asyncio.get_event_loop()
+        if loop.is_running():
+            # If the loop is running, schedule the cleanup
+            asyncio.ensure_future(Gemini.close_plugins())
+        else:
+            # If the loop is not running, run the cleanup synchronously
+            loop.run_until_complete(Gemini.close_plugins())
+    except Exception as e:
+        print(f"Error during cleanup: {e}")
+
+
+# Register cleanup function to run on exit
+atexit.register(cleanup_resources)
 
 def get_telegram_app():
     global _telegram_app

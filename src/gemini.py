@@ -58,3 +58,12 @@ class Gemini:
         response = await chat.send_message([prompt, image])
         print("Image response: " + response.text)
         return response.text
+
+    @classmethod
+    async def close_plugins(cls) -> None:
+        """Close all plugins and cleanup resources.
+
+        This should be called on application shutdown to properly
+        close HTTP connections and prevent resource leaks.
+        """
+        await cls.__plugin_manager.close()

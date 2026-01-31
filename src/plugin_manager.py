@@ -6,6 +6,12 @@ from google.genai.types import PartDict, FunctionResponseDict, FunctionCall, Par
 
 
 class PluginManager:
+    """Manages plugins and their lifecycle.
+
+    Handles plugin initialization, tool registration, and cleanup.
+    Should be used as an async context manager or properly closed when done.
+    """
+
     def __init__(self):
         self.__date_time_plugin = DateTimePlugin()
         self.__weather_plugin = WeatherPlugin()
@@ -48,3 +54,21 @@ class PluginManager:
             return function_response
         else:
             return None
+
+    async def close(self) -> None:
+        """Close all plugins and cleanup resources.
+
+        This should be called when the plugin manager is no longer needed
+        to properly close HTTP connections and prevent resource leaks.
+        """
+        # Close plugins that have a close method
+        if hasattr(self.__weather_plugin, 'close'):
+            await self.__weather_plugin.close()
+
+    async def __aenter__(self) -> "PluginManager":
+        """Async context manager entry."""
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
+        """Async context manager exit. Ensures cleanup of resources."""
+        await self.close()
