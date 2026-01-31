@@ -4,6 +4,14 @@ from datetime import datetime
 
 from src.models.weather_models import CurrentWeatherResponse, TimeMachineResponse
 from src.services.open_weather_map_service import OpenWeatherMapService
+from src.exceptions.weather_exceptions import (
+    InvalidAPIKeyError,
+    LocationNotFoundError,
+    BadRequestError,
+    RateLimitError,
+    ServerError,
+    OpenWeatherMapError,
+)
 
 class WeatherPlugin: 
     def __init__(self):
@@ -12,21 +20,19 @@ class WeatherPlugin:
         self.description: str = "Get the weather of a city at a particular date and time. If the date is today, the current weather will be returned. Otherwise, the weather at the specified date and time will be returned. If the user does not specify a date and time, the current date and time will be used. If the user types a date like 'tomorrow' or 'in 2 days', you should convert it to the appropriate date. If the user does not specify a unit, the temperature will be returned in Celsius. If the user specifies a unit, the temperature will be returned in that unit."
         self.parameters = Schema(
             type=Type.OBJECT,
+            required=["city", "latitude", "longitude"],
             properties={
                 "city": {
                     "type": Type.STRING,
                     "description": "The city to get the weather for.",
-                    "required": True
                 },
                 "latitude": {
                     "type": Type.NUMBER,
                     "description": "The latitude of the location to get the weather for.",
-                    "required": True
                 },
                 "longitude": {
                     "type": Type.NUMBER,
                     "description": "The longitude of the location to get the weather for.",
-                    "required": True
                 },
                 "date_time": {
                     "type": Type.INTEGER,
@@ -55,47 +61,112 @@ class WeatherPlugin:
     
 
     async def get_weather(self, city: str, latitude: float, longitude: float, date_time: int = None, unit: str = 'metric') -> dict:
+        """Get weather data for a location.
 
-        if(date_time is None):
+        Args:
+            city: City name for current weather
+            latitude: Latitude for historical/forecast weather
+            longitude: Longitude for historical/forecast weather
+            date_time: Unix timestamp (defaults to current time)
+            unit: Temperature unit (standard/metric/imperial)
+
+        Returns:
+            Dict with weather data or error message
+        """
+        if date_time is None:
             date_time = int(datetime.now().timestamp())
-        
+
         print("Getting weather for city: ", city, " at date time: ", date_time, " with unit: ", unit)
-        parsed_date = datetime.fromtimestamp(date_time)
 
-        print("Parsed date: ", parsed_date)
+        try:
+            parsed_date = datetime.fromtimestamp(date_time)
+            print("Parsed date: ", parsed_date)
 
-        if parsed_date is None:
-            return "Invalid date and time format. Please enter a valid date and time format."
+            weather = None
 
-        
-        weather = None
+            # Determine if we need current weather or historical/forecast
+            if parsed_date.date() == datetime.now().date():
+                weather = await self.openweathermap_service.get_current_weather(city, units=unit)
+            else:
+                weather = await self.openweathermap_service.get_timemachine_data(
+                    latitude, longitude, dt=int(parsed_date.timestamp()), units=unit
+                )
 
-        if parsed_date.date() == datetime.now().date():
-            weather = await self.openweathermap_service.get_current_weather(city, units=unit)
-           
-        else: 
-            weather = await self.openweathermap_service.get_timemachine_data(latitude, longitude, dt=int(parsed_date.timestamp()), units=unit)
+            # Format response based on weather type
+            if isinstance(weather, CurrentWeatherResponse):
+                return {
+                    "success": True,
+                    "description": weather.weather[0].description,
+                    "temperature": weather.main.temp,
+                    "feels_like": weather.main.feels_like,
+                    "humidity": weather.main.humidity,
+                    "wind_speed": weather.wind.speed,
+                    "pressure": weather.main.pressure,
+                    "conditions": weather.weather[0].main if weather.weather else "",
+                }
+            elif isinstance(weather, TimeMachineResponse):
+                if not weather.data:
+                    return {
+                        "success": False,
+                        "error": "No weather data available for the specified time."
+                    }
 
+                hourly_weather = weather.data[0]
+                return {
+                    "success": True,
+                    "description": hourly_weather.weather[0].description if hourly_weather.weather else "",
+                    "temperature": hourly_weather.temp,
+                    "feels_like": hourly_weather.feels_like,
+                    "humidity": hourly_weather.humidity,
+                    "wind_speed": hourly_weather.wind_speed,
+                    "pressure": hourly_weather.pressure,
+                }
+            else:
+                return {
+                    "success": False,
+                    "error": "Unexpected weather response type received."
+                }
 
-        if isinstance(weather, CurrentWeatherResponse):
+        except InvalidAPIKeyError as e:
             return {
-                "description": weather.weather[0].description,
-                "temperature": weather.main.temp,
-                "feels_like": weather.main.feels_like,
-                "humidity": weather.main.humidity,
-                "wind_speed": weather.wind.speed,
-                "pressure": weather.main.pressure,
-                "conditions": weather.weather[0].main,
+                "success": False,
+                "error": f"API key error: {e.message}. Please check your OpenWeatherMap API key configuration."
             }
-        elif isinstance(weather, TimeMachineResponse):
-            hourly_weather = weather.data[0]
+        except LocationNotFoundError as e:
             return {
-                "description": hourly_weather.weather[0].description,
-                "temperature": hourly_weather.temp,
-                "feels_like": hourly_weather.feels_like,
-                "humidity": hourly_weather.humidity,
-                "wind_speed": hourly_weather.wind_speed,
-                "pressure": hourly_weather.pressure,
+                "success": False,
+                "error": f"Location not found: {e.message}. Please check the city name or coordinates."
+            }
+        except BadRequestError as e:
+            params_info = f" (parameters: {', '.join(e.parameters)})" if e.parameters else ""
+            return {
+                "success": False,
+                "error": f"Invalid request: {e.message}{params_info}"
+            }
+        except RateLimitError as e:
+            return {
+                "success": False,
+                "error": f"Rate limit exceeded: {e.message}. Please try again later."
+            }
+        except ServerError as e:
+            return {
+                "success": False,
+                "error": f"Weather service error: {e.message}. Please try again later."
+            }
+        except OpenWeatherMapError as e:
+            return {
+                "success": False,
+                "error": f"Weather API error: {e.message}"
+            }
+        except ValueError as e:
+            return {
+                "success": False,
+                "error": f"Invalid timestamp: {str(e)}"
+            }
+        except Exception as e:
+            return {
+                "success": False,
+                "error": f"Unexpected error: {str(e)}"
             }
         
         

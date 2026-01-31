@@ -19,10 +19,10 @@ class CurrentWeatherCoord(BaseModel):
 
 class CurrentWeatherMain(BaseModel):
     """Main weather parameters."""
-    temp: float = Field(..., description="Temperature in Celsius")
-    feels_like: float = Field(..., description="Perceived temperature in Celsius")
-    temp_min: float = Field(..., description="Minimum temperature in Celsius")
-    temp_max: float = Field(..., description="Maximum temperature in Celsius")
+    temp: float = Field(..., description="Temperature (units: Kelvin for standard, Celsius for metric, Fahrenheit for imperial)")
+    feels_like: float = Field(..., description="Perceived temperature (units: Kelvin for standard, Celsius for metric, Fahrenheit for imperial)")
+    temp_min: float = Field(..., description="Minimum temperature (units: Kelvin for standard, Celsius for metric, Fahrenheit for imperial)")
+    temp_max: float = Field(..., description="Maximum temperature (units: Kelvin for standard, Celsius for metric, Fahrenheit for imperial)")
     pressure: int = Field(..., description="Atmospheric pressure in hPa")
     humidity: int = Field(..., description="Humidity percentage")
     sea_level: Optional[int] = Field(None, description="Atmospheric pressure at sea level in hPa")
@@ -86,11 +86,11 @@ class OneCallCurrentWeather(BaseModel):
     dt: int = Field(..., description="Current time, Unix, UTC")
     sunrise: Optional[int] = Field(None, description="Sunrise time, Unix, UTC")
     sunset: Optional[int] = Field(None, description="Sunset time, Unix, UTC")
-    temp: float = Field(..., description="Temperature in Celsius")
-    feels_like: float = Field(..., description="Perceived temperature in Celsius")
+    temp: float = Field(..., description="Temperature (units: Kelvin for standard, Celsius for metric, Fahrenheit for imperial)")
+    feels_like: float = Field(..., description="Perceived temperature (units: Kelvin for standard, Celsius for metric, Fahrenheit for imperial)")
     pressure: int = Field(..., description="Atmospheric pressure at sea level in hPa")
     humidity: int = Field(..., description="Humidity percentage")
-    dew_point: float = Field(..., description="Dew point temperature in Celsius")
+    dew_point: float = Field(..., description="Dew point temperature (units: Kelvin for standard, Celsius for metric, Fahrenheit for imperial)")
     uvi: float = Field(..., description="UV index")
     clouds: int = Field(..., description="Cloudiness percentage")
     visibility: int = Field(..., description="Average visibility in meters (max 10km)")
@@ -111,11 +111,11 @@ class MinutelyForecast(BaseModel):
 class HourlyForecast(BaseModel):
     """Hourly forecast data."""
     dt: int = Field(..., description="Time of forecasted data, Unix, UTC")
-    temp: float = Field(..., description="Temperature in Celsius")
-    feels_like: float = Field(..., description="Perceived temperature in Celsius")
+    temp: float = Field(..., description="Temperature (units: Kelvin for standard, Celsius for metric, Fahrenheit for imperial)")
+    feels_like: float = Field(..., description="Perceived temperature (units: Kelvin for standard, Celsius for metric, Fahrenheit for imperial)")
     pressure: int = Field(..., description="Atmospheric pressure at sea level in hPa")
     humidity: int = Field(..., description="Humidity percentage")
-    dew_point: float = Field(..., description="Dew point temperature in Celsius")
+    dew_point: float = Field(..., description="Dew point temperature (units: Kelvin for standard, Celsius for metric, Fahrenheit for imperial)")
     uvi: float = Field(..., description="UV index")
     clouds: int = Field(..., description="Cloudiness percentage")
     visibility: int = Field(..., description="Average visibility in meters")
@@ -130,20 +130,20 @@ class HourlyForecast(BaseModel):
 
 class DailyTemperature(BaseModel):
     """Daily temperature variations."""
-    day: float = Field(..., description="Day temperature in Celsius")
-    min: float = Field(..., description="Min daily temperature in Celsius")
-    max: float = Field(..., description="Max daily temperature in Celsius")
-    night: float = Field(..., description="Night temperature in Celsius")
-    eve: float = Field(..., description="Evening temperature in Celsius")
-    morn: float = Field(..., description="Morning temperature in Celsius")
+    day: float = Field(..., description="Day temperature (units: Kelvin for standard, Celsius for metric, Fahrenheit for imperial)")
+    min: float = Field(..., description="Min daily temperature (units: Kelvin for standard, Celsius for metric, Fahrenheit for imperial)")
+    max: float = Field(..., description="Max daily temperature (units: Kelvin for standard, Celsius for metric, Fahrenheit for imperial)")
+    night: float = Field(..., description="Night temperature (units: Kelvin for standard, Celsius for metric, Fahrenheit for imperial)")
+    eve: float = Field(..., description="Evening temperature (units: Kelvin for standard, Celsius for metric, Fahrenheit for imperial)")
+    morn: float = Field(..., description="Morning temperature (units: Kelvin for standard, Celsius for metric, Fahrenheit for imperial)")
 
 
 class DailyFeelsLike(BaseModel):
     """Daily perceived temperature variations."""
-    day: float = Field(..., description="Day perceived temperature in Celsius")
-    night: float = Field(..., description="Night perceived temperature in Celsius")
-    eve: float = Field(..., description="Evening perceived temperature in Celsius")
-    morn: float = Field(..., description="Morning perceived temperature in Celsius")
+    day: float = Field(..., description="Day perceived temperature (units: Kelvin for standard, Celsius for metric, Fahrenheit for imperial)")
+    night: float = Field(..., description="Night perceived temperature (units: Kelvin for standard, Celsius for metric, Fahrenheit for imperial)")
+    eve: float = Field(..., description="Evening perceived temperature (units: Kelvin for standard, Celsius for metric, Fahrenheit for imperial)")
+    morn: float = Field(..., description="Morning perceived temperature (units: Kelvin for standard, Celsius for metric, Fahrenheit for imperial)")
 
 
 class DailyForecast(BaseModel):
@@ -159,7 +159,7 @@ class DailyForecast(BaseModel):
     feels_like: DailyFeelsLike = Field(..., description="Perceived temperature variations")
     pressure: int = Field(..., description="Atmospheric pressure at sea level in hPa")
     humidity: int = Field(..., description="Humidity percentage")
-    dew_point: float = Field(..., description="Dew point temperature in Celsius")
+    dew_point: float = Field(..., description="Dew point temperature (units: Kelvin for standard, Celsius for metric, Fahrenheit for imperial)")
     wind_speed: float = Field(..., description="Wind speed in m/s")
     wind_deg: int = Field(..., description="Wind direction in degrees")
     wind_gust: Optional[float] = Field(None, description="Wind gust in m/s")
@@ -199,11 +199,11 @@ class TimeMachineData(BaseModel):
     dt: int = Field(..., description="Time of data, Unix, UTC")
     sunrise: Optional[int] = Field(None, description="Sunrise time, Unix, UTC")
     sunset: Optional[int] = Field(None, description="Sunset time, Unix, UTC")
-    temp: float = Field(..., description="Temperature in Celsius")
-    feels_like: float = Field(..., description="Perceived temperature in Celsius")
+    temp: float = Field(..., description="Temperature (units: Kelvin for standard, Celsius for metric, Fahrenheit for imperial)")
+    feels_like: float = Field(..., description="Perceived temperature (units: Kelvin for standard, Celsius for metric, Fahrenheit for imperial)")
     pressure: int = Field(..., description="Atmospheric pressure at sea level in hPa")
     humidity: int = Field(..., description="Humidity percentage")
-    dew_point: float = Field(..., description="Dew point temperature in Celsius")
+    dew_point: float = Field(..., description="Dew point temperature (units: Kelvin for standard, Celsius for metric, Fahrenheit for imperial)")
     uvi: float = Field(..., description="UV index")
     clouds: int = Field(..., description="Cloudiness percentage")
     visibility: int = Field(..., description="Average visibility in meters")

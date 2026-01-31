@@ -32,7 +32,7 @@ class Gemini:
         )
 
     async def send_message(self, prompt: str, chat: AsyncChat) -> str:
-        function_request = await chat.send(prompt)
+        function_request = await chat.send_message(prompt)
         
         print("Function Request: " + function_request.__str__())
 
