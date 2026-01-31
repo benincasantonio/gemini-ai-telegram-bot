@@ -13,15 +13,35 @@ This project is a chatbot application that uses Google's Generative AI (Gemini) 
 
 The following environment variables are required for the application to run:
 
-| Variable                      | Description                                                                                                                                  | Default Value           |
-| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
-| `GEMINI_API_KEY`              | Your Gemini API key                                                                                                                          | None                    |
+| Variable                      | Description                                                                                                                                  | Default Value      |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
+| `GEMINI_API_KEY`              | Your Gemini API key                                                                                                                          | None               |
 | `GEMINI_MODEL_NAME`           | The Gemini model name                                                                                                                        | `gemini-2.5-flash` |
-| `TELEGRAM_BOT_TOKEN`          | Your Telegram Bot token                                                                                                                      | None                    |
-| `OWM_API_KEY`                 | Your [Open Weather Map](https://openweathermap.org/api) API Key                                                                              | None                    |
-| `ENABLE_SECURE_WEBHOOK_TOKEN` | Enable validation of a secure token passed to the Telegram API webhook to prevent unauthorized access. Allowed values are 'True' or 'False'. | True                    |
-| `TELEGRAM_WEBHOOK_SECRET`     | A secure token used to validate incoming requests to the Telegram API webhook.                                                               | None                    |
-| `MAX_HISTORY_MESSAGES`        | Maximum number of chat messages to include in context when sending to Gemini. Limits history to prevent context overflow.                    | 50                      |
+| `TELEGRAM_BOT_TOKEN`          | Your Telegram Bot token                                                                                                                      | None               |
+| `OWM_API_KEY`                 | Your [Open Weather Map](https://openweathermap.org/api) API Key                                                                              | None               |
+| `ENABLE_SECURE_WEBHOOK_TOKEN` | Enable validation of a secure token passed to the Telegram API webhook to prevent unauthorized access. Allowed values are 'True' or 'False'. | True               |
+| `TELEGRAM_WEBHOOK_SECRET`     | A secure token used to validate incoming requests to the Telegram API webhook.                                                               | None               |
+| `MAX_HISTORY_MESSAGES`        | Maximum number of chat messages to include in context when sending to Gemini. Limits history to prevent context overflow.                    | 50                 |
+
+## Database Migrations
+
+This project uses Alembic for database migrations. Commands:
+
+```bash
+# Check current migration status
+alembic current
+
+# Apply all pending migrations
+alembic upgrade head
+
+# Create a new migration (after changing models)
+alembic revision --autogenerate -m "description of changes"
+
+# Rollback one migration
+alembic downgrade -1
+```
+
+> **Note**: Set `SQLALCHEMY_DATABASE_URI` environment variable before running migrations.
 
 ## Project Progress
 
