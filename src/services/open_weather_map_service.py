@@ -31,7 +31,13 @@ class OpenWeatherMapService:
                    - "standard" (Kelvin for temperature)
                    - "metric" (Celsius for temperature) - default
                    - "imperial" (Fahrenheit for temperature)
+
+        Raises:
+            ValueError: If api_key is None or empty
         """
+        if not api_key:
+            raise ValueError("API key is required and cannot be None or empty")
+
         self.api_key: str = api_key
         self.units: Units = units
         self.client_v2: AsyncClient = AsyncClient(base_url=self.BASE_URL_V2)

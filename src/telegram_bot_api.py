@@ -11,7 +11,7 @@ from .flask_app import app, db, ChatSession
 from .chat_service import ChatService
 
 chat_service = ChatService()
-gemini = Gemini()
+gemini = None
 
 _telegram_app = None
 
@@ -22,6 +22,14 @@ def get_telegram_app():
         _telegram_app = ApplicationBuilder().token(getenv('TELEGRAM_BOT_TOKEN')).build()
 
     return _telegram_app
+
+def get_gemini():
+    global gemini
+
+    if gemini is None:
+        gemini = Gemini()
+        
+    return gemini
 
 
 
