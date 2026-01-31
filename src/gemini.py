@@ -29,7 +29,6 @@ class Gemini:
             model=self.__model_name,
             history=history,
             config=self.__generation_config,
-
         )
 
     async def send_message(self, prompt: str, chat: AsyncChat) -> str:
