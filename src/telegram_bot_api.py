@@ -26,15 +26,26 @@ def cleanup_resources():
 
     This function is called automatically when the application exits
     to ensure all HTTP connections are properly closed.
+
+    Note: This runs in a synchronous context (atexit) where there may be
+    no running event loop, so we create a new one if needed.
     """
     try:
-        loop = asyncio.get_event_loop()
-        if loop.is_running():
-            # If the loop is running, schedule the cleanup
-            asyncio.ensure_future(Gemini.close_plugins())
+        # Try to get the current event loop, but it may not exist
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            # No running loop, create a new one
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            try:
+                loop.run_until_complete(Gemini.close_plugins())
+            finally:
+                loop.close()
         else:
-            # If the loop is not running, run the cleanup synchronously
-            loop.run_until_complete(Gemini.close_plugins())
+            # There's a running loop (shouldn't happen in atexit, but handle it)
+            # We can't block on it, so just create a task
+            loop.create_task(Gemini.close_plugins())
     except Exception as e:
         print(f"Error during cleanup: {e}")
 
@@ -70,7 +81,7 @@ async def webhook():
     chat_id = None
 
     telegram_app = get_telegram_app()
-    gemini = get_gemini()
+    gemini_instance = get_gemini()
 
     enable_secure_webhook_token = getenv('ENABLE_SECURE_WEBHOOK_TOKEN') in ('True', None)
 
@@ -131,8 +142,8 @@ async def webhook():
             if update.message.caption:
                 prompt = update.message.caption
             print("Prompt is ", prompt)
-            chat = await gemini.get_chat(history=history)
-            text = await gemini.send_image(prompt, image, chat)
+            chat = await gemini_instance.get_chat(history=history)
+            text = await gemini_instance.send_image(prompt, image, chat)
 
             # Add user and model messages to the chat session
             chat_service.add_message(session.id, prompt, update.message.date, "user")
@@ -140,8 +151,8 @@ async def webhook():
         else:
 
             print("History: ", history.__str__())
-            chat = await gemini.get_chat(history=history)
-            text = await gemini.send_message(update.message.text, chat)
+            chat = await gemini_instance.get_chat(history=history)
+            text = await gemini_instance.send_message(update.message.text, chat)
             
             # Add user and model messages to the chat session
             chat_service.add_message(session.id, update.message.text, update.message.date, "user")

@@ -1,5 +1,5 @@
 """OpenWeatherMap API service for weather data retrieval."""
-from typing import Literal, Optional
+from typing import Literal, NoReturn, Optional
 from httpx import AsyncClient, HTTPStatusError
 
 from ..models.weather_models import (
@@ -51,7 +51,7 @@ class OpenWeatherMapService:
         self.client_v2: AsyncClient = AsyncClient(base_url=self.BASE_URL_V2)
         self.client_v3: AsyncClient = AsyncClient(base_url=self.BASE_URL_V3)
 
-    def _handle_http_error(self, error: HTTPStatusError) -> None:
+    def _handle_http_error(self, error: HTTPStatusError) -> NoReturn:
         """Convert HTTP errors to custom exceptions with user-friendly messages.
 
         Args:

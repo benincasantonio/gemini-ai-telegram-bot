@@ -2,9 +2,9 @@ from google.genai.types import FunctionDeclaration, Tool, Schema, Type
 from os import getenv
 from datetime import datetime
 
-from src.models.weather_models import CurrentWeatherResponse, TimeMachineResponse
-from src.services.open_weather_map_service import OpenWeatherMapService
-from src.exceptions.weather_exceptions import (
+from ..models.weather_models import CurrentWeatherResponse, TimeMachineResponse
+from ..services.open_weather_map_service import OpenWeatherMapService
+from ..exceptions.weather_exceptions import (
     InvalidAPIKeyError,
     LocationNotFoundError,
     BadRequestError,
