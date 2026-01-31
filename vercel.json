@@ -2,16 +2,19 @@
   "version": 2,
   "builds": [
     {
-      "src": "src/telegram_bot_api.py",
+      "src": "src/main.py",
       "use": "@vercel/python",
-      "config": { "maxLambdaSize": "15mb", "runtime": "python3.12", "maxDuration": 60 }
+      "config": {
+        "maxLambdaSize": "15mb",
+        "runtime": "python3.12",
+        "maxDuration": 60
+      }
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "src/telegram_bot_api.py"
-      
+      "dest": "src/main.py"
     }
   ]
 }
