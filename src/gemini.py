@@ -4,37 +4,35 @@ import PIL.Image
 from google import genai
 from google.genai import types
 
-from google.genai.chats import Chat, GenerateContentConfigOrDict
+from google.genai.chats import AsyncChat, GenerateContentConfigOrDict
 from .config import Config
 from .plugin_manager import PluginManager
 
 
 class Gemini:
-
-
-    __plugin_manager = PluginManager()
-
+    
     def __init__(self):
+        self.__plugin_manager = PluginManager()
+        
         self.__model_name = getenv('GEMINI_MODEL_NAME', Config.DEFAULT_GEMINI_MODEL_NAME)
         self.__client = genai.Client(
             api_key=getenv('GEMINI_API_KEY')
-        )
+        ).aio
 
         self.__generation_config: GenerateContentConfigOrDict = types.GenerateContentConfig(
             temperature=0.5,
             tools=self.__plugin_manager.get_tools(),
         )
 
-    def get_chat(self, history: list) -> Chat:
-        return self.__client.chats.create(
+    async def get_chat(self, history: list) -> AsyncChat:
+        return await self.__client.chats.create(
             model=self.__model_name,
             history=history,
             config=self.__generation_config,
-
         )
 
-    def send_message(self, prompt: str, chat: Chat) -> str:
-        function_request = chat.send_message(prompt)
+    async def send_message(self, prompt: str, chat: AsyncChat) -> str:
+        function_request = await chat.send_message(prompt)
         
         print("Function Request: " + function_request.__str__())
 
@@ -42,10 +40,10 @@ class Gemini:
 
         if not function_call:
             chat.get_history().pop()
-            response = chat.send_message(prompt)
+            response = await chat.send_message(prompt)
             return response.text
 
-        function_response = self.__plugin_manager.get_function_response(function_call, chat)
+        function_response = await self.__plugin_manager.get_function_response(function_call, chat)
 
         print("Response: " + function_response.__str__())
 
@@ -56,7 +54,16 @@ class Gemini:
 
 
     @staticmethod
-    def send_image(prompt: str, image: PIL.Image, chat: Chat) -> str:
-        response = chat.send_message([prompt, image])
+    async def send_image(prompt: str, image: PIL.Image, chat: AsyncChat) -> str:
+        response = await chat.send_message([prompt, image])
         print("Image response: " + response.text)
         return response.text
+
+    @classmethod
+    async def close_plugins(cls) -> None:
+        """Close all plugins and cleanup resources.
+
+        This should be called on application shutdown to properly
+        close HTTP connections and prevent resource leaks.
+        """
+        await cls.__plugin_manager.close()

@@ -1,3 +1,4 @@
+from dotenv import load_dotenv
 from flask import request
 from .gemini import Gemini
 from md2tgmd import escape
@@ -9,8 +10,65 @@ from PIL import Image
 from .enums import TelegramBotCommands
 from .flask_app import app, db, ChatSession
 from .chat_service import ChatService
+import atexit
+import asyncio
+
+load_dotenv()
 
 chat_service = ChatService()
+gemini = None
+
+_telegram_app = None
+
+
+def cleanup_resources():
+    """Cleanup resources on application shutdown.
+
+    This function is called automatically when the application exits
+    to ensure all HTTP connections are properly closed.
+
+    Note: This runs in a synchronous context (atexit) where there may be
+    no running event loop, so we create a new one if needed.
+    """
+    try:
+        # Try to get the current event loop, but it may not exist
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            # No running loop, create a new one
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            try:
+                loop.run_until_complete(Gemini.close_plugins())
+            finally:
+                loop.close()
+        else:
+            # There's a running loop (shouldn't happen in atexit, but handle it)
+            # We can't block on it, so just create a task
+            loop.create_task(Gemini.close_plugins())
+    except Exception as e:
+        print(f"Error during cleanup: {e}")
+
+
+# Register cleanup function to run on exit
+atexit.register(cleanup_resources)
+
+def get_telegram_app():
+    global _telegram_app
+
+    if _telegram_app is None:
+        _telegram_app = ApplicationBuilder().token(getenv('TELEGRAM_BOT_TOKEN')).build()
+
+    return _telegram_app
+
+def get_gemini():
+    global gemini
+
+    if gemini is None:
+        gemini = Gemini()
+        
+    return gemini
+
 
 
 @app.get('/')
@@ -22,11 +80,10 @@ def hello_world():
 async def webhook():
     chat_id = None
 
-    telegram_app = ApplicationBuilder().token(getenv('TELEGRAM_BOT_TOKEN')).build()
-    gemini = Gemini()
+    telegram_app = get_telegram_app()
+    gemini_instance = get_gemini()
+
     enable_secure_webhook_token = getenv('ENABLE_SECURE_WEBHOOK_TOKEN') in ('True', None)
-
-
 
     try:
         body = request.get_json()
@@ -85,8 +142,8 @@ async def webhook():
             if update.message.caption:
                 prompt = update.message.caption
             print("Prompt is ", prompt)
-            chat = gemini.get_chat(history=history)
-            text = gemini.send_image(prompt, image, chat)
+            chat = await gemini_instance.get_chat(history=history)
+            text = await gemini_instance.send_image(prompt, image, chat)
 
             # Add user and model messages to the chat session
             chat_service.add_message(session.id, prompt, update.message.date, "user")
@@ -94,8 +151,8 @@ async def webhook():
         else:
 
             print("History: ", history.__str__())
-            chat = gemini.get_chat(history=history)
-            text = gemini.send_message(update.message.text, chat)
+            chat = await gemini_instance.get_chat(history=history)
+            text = await gemini_instance.send_message(update.message.text, chat)
             
             # Add user and model messages to the chat session
             chat_service.add_message(session.id, update.message.text, update.message.date, "user")
