@@ -18,10 +18,26 @@ class WeatherPlugin:
 
     This plugin uses OpenWeatherMap API to fetch weather information.
     It should be used as an async context manager or properly closed when done.
+
+    Raises:
+        ValueError: If OWM_API_KEY environment variable is not set or empty
     """
 
     def __init__(self):
-        self.openweathermap_service = OpenWeatherMapService(api_key=getenv('OWM_API_KEY'))
+        api_key = getenv('OWM_API_KEY')
+        if not api_key:
+            raise ValueError(
+                "OWM_API_KEY environment variable is not set or is empty. "
+                "Please configure your OpenWeatherMap API key in the .env file."
+            )
+
+        try:
+            self.openweathermap_service = OpenWeatherMapService(api_key=api_key)
+        except ValueError as e:
+            # Re-raise with more context about where the error occurred
+            raise ValueError(
+                f"Failed to initialize OpenWeatherMap service: {str(e)}"
+            ) from e
         self.name: str = "get_weather"
         self.description: str = "Get the weather of a city at a particular date and time. If the date is today, the current weather will be returned. Otherwise, the weather at the specified date and time will be returned. If the user does not specify a date and time, the current date and time will be used. If the user types a date like 'tomorrow' or 'in 2 days', you should convert it to the appropriate date. If the user does not specify a unit, the temperature will be returned in Celsius. If the user specifies a unit, the temperature will be returned in that unit."
         self.parameters = Schema(
