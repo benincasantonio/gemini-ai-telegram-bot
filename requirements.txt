@@ -10,3 +10,5 @@ Flask-Migrate~=4.0.7
 psycopg2-binary~=2.9.10
 google-genai~=1.61.0
 pytest~=9.0.2
+httpx~=0.28.1
+pydantic~=2.12.5

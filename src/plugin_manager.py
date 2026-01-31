@@ -1,3 +1,4 @@
+import asyncio
 from .plugins.weather_plugin import WeatherPlugin
 from .plugins.date_time_plugin import DateTimePlugin
 from google.genai.chats import AsyncChat
@@ -34,7 +35,7 @@ class PluginManager:
 
         if function_call.name in function_declarations:
             args = {key: value for key, value in function_call.args.items()}
-            if callable(getattr(function_declarations[function_call.name], "__await__", None)):
+            if asyncio.iscoroutinefunction(function_declarations[function_call.name]):
                 result = await function_declarations[function_call.name](**args)
             else:
                 result = function_declarations[function_call.name](**args)

@@ -10,9 +10,9 @@ from .plugin_manager import PluginManager
 
 
 class Gemini:
-    __plugin_manager = PluginManager()
-
+    
     def __init__(self):
+        self.__plugin_manager = PluginManager()
         
         self.__model_name = getenv('GEMINI_MODEL_NAME', Config.DEFAULT_GEMINI_MODEL_NAME)
         self.__client = genai.Client(
