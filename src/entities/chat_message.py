@@ -13,7 +13,7 @@ class ChatMessage(Base):
     id = Column(Integer, primary_key=True)
     chat_id = Column(Integer, ForeignKey('chat_session.id'), nullable=False)
     text = Column(Text)
-    date = Column(DateTime)
+    date = Column(DateTime(timezone=True))  # Supports timezone-aware datetimes
     role = Column(String(20))
     
     session = relationship('ChatSession', back_populates='messages')

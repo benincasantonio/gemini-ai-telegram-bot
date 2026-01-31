@@ -15,6 +15,9 @@ def get_database_url() -> str:
     Converts:
     - postgresql:// → postgresql+asyncpg://
     - sqlite:// → sqlite+aiosqlite://
+    
+    Note: For asyncpg, use 'ssl=require' instead of 'sslmode=require' in your URL.
+    Example: postgresql://user:pass@host/db?ssl=require
     """
     url = getenv("SQLALCHEMY_DATABASE_URI", "sqlite:///db.sqlite")
     
