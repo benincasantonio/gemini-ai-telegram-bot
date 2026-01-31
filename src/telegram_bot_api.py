@@ -142,7 +142,7 @@ async def webhook():
             if update.message.caption:
                 prompt = update.message.caption
             print("Prompt is ", prompt)
-            chat = await gemini_instance.get_chat(history=history)
+            chat = gemini_instance.get_chat(history=history)
             text = await gemini_instance.send_image(prompt, image, chat)
 
             # Add user and model messages to the chat session
@@ -151,7 +151,7 @@ async def webhook():
         else:
 
             print("History: ", history.__str__())
-            chat = await gemini_instance.get_chat(history=history)
+            chat = gemini_instance.get_chat(history=history)
             text = await gemini_instance.send_message(update.message.text, chat)
             
             # Add user and model messages to the chat session

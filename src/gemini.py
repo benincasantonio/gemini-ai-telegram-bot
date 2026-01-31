@@ -24,8 +24,8 @@ class Gemini:
             tools=self.__plugin_manager.get_tools(),
         )
 
-    async def get_chat(self, history: list) -> AsyncChat:
-        return await self.__client.chats.create(
+    def get_chat(self, history: list) -> AsyncChat:
+        return self.__client.chats.create(
             model=self.__model_name,
             history=history,
             config=self.__generation_config,
