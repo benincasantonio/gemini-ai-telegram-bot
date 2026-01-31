@@ -15,7 +15,7 @@ gemini = Gemini()
 
 _telegram_app = None
 
-async def get_telegram_app():
+def get_telegram_app():
     global _telegram_app
 
     if _telegram_app is None:
@@ -34,10 +34,8 @@ def hello_world():
 async def webhook():
     chat_id = None
 
-    telegram_app = await get_telegram_app()
+    telegram_app = get_telegram_app()
     enable_secure_webhook_token = getenv('ENABLE_SECURE_WEBHOOK_TOKEN') in ('True', None)
-
-
 
     try:
         body = request.get_json()
