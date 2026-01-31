@@ -46,6 +46,8 @@ async def webhook():
     chat_id = None
 
     telegram_app = get_telegram_app()
+    gemini = get_gemini()
+
     enable_secure_webhook_token = getenv('ENABLE_SECURE_WEBHOOK_TOKEN') in ('True', None)
 
     try:
