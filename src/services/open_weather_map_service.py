@@ -1,11 +1,19 @@
 """OpenWeatherMap API service for weather data retrieval."""
 from typing import Literal, Optional
-from httpx import AsyncClient
+from httpx import AsyncClient, HTTPStatusError
 
 from ..models.weather_models import (
     CurrentWeatherResponse,
     OneCallResponse,
     TimeMachineResponse,
+)
+from ..exceptions.weather_exceptions import (
+    BadRequestError,
+    InvalidAPIKeyError,
+    LocationNotFoundError,
+    OpenWeatherMapError,
+    RateLimitError,
+    ServerError,
 )
 
 # Type alias for units of measurement
@@ -43,6 +51,45 @@ class OpenWeatherMapService:
         self.client_v2: AsyncClient = AsyncClient(base_url=self.BASE_URL_V2)
         self.client_v3: AsyncClient = AsyncClient(base_url=self.BASE_URL_V3)
 
+    def _handle_http_error(self, error: HTTPStatusError) -> None:
+        """Convert HTTP errors to custom exceptions with user-friendly messages.
+
+        Args:
+            error: The HTTP status error from httpx
+
+        Raises:
+            InvalidAPIKeyError: For 401 Unauthorized errors
+            LocationNotFoundError: For 404 Not Found errors
+            BadRequestError: For 400 Bad Request errors
+            RateLimitError: For 429 Too Many Requests errors
+            ServerError: For 5xx Server errors
+            OpenWeatherMapError: For any other HTTP errors
+        """
+        status_code = error.response.status_code
+
+        # Try to parse error response JSON
+        try:
+            error_data = error.response.json()
+            message = error_data.get("message", str(error))
+            parameters = error_data.get("parameters", [])
+        except Exception:
+            message = str(error)
+            parameters = []
+
+        # Map status codes to custom exceptions
+        if status_code == 401:
+            raise InvalidAPIKeyError(message)
+        elif status_code == 404:
+            raise LocationNotFoundError(message)
+        elif status_code == 400:
+            raise BadRequestError(message, parameters=parameters)
+        elif status_code == 429:
+            raise RateLimitError(message)
+        elif status_code >= 500:
+            raise ServerError(message)
+        else:
+            raise OpenWeatherMapError(message, status_code=status_code)
+
     async def get_current_weather(
         self,
         city: str,
@@ -60,16 +107,24 @@ class OpenWeatherMapService:
             CurrentWeatherResponse with current weather data
 
         Raises:
-            httpx.HTTPStatusError: If the API request fails
+            InvalidAPIKeyError: If the API key is invalid or unauthorized
+            LocationNotFoundError: If the city is not found
+            BadRequestError: If the request parameters are invalid
+            RateLimitError: If the API rate limit is exceeded
+            ServerError: If the OpenWeatherMap server encounters an error
+            OpenWeatherMapError: For any other API errors
         """
         params = {
             "q": city,
             "appid": self.api_key,
             "units": units or self.units
         }
-        response = await self.client_v2.get("weather", params=params)
-        response.raise_for_status()
-        return CurrentWeatherResponse(**response.json())
+        try:
+            response = await self.client_v2.get("weather", params=params)
+            response.raise_for_status()
+            return CurrentWeatherResponse(**response.json())
+        except HTTPStatusError as e:
+            self._handle_http_error(e)
 
     async def forecast(
         self,
@@ -96,7 +151,12 @@ class OpenWeatherMapService:
             OneCallResponse with comprehensive weather forecast data
 
         Raises:
-            httpx.HTTPStatusError: If the API request fails
+            InvalidAPIKeyError: If the API key is invalid or unauthorized
+            LocationNotFoundError: If the coordinates are not found
+            BadRequestError: If the request parameters are invalid
+            RateLimitError: If the API rate limit is exceeded
+            ServerError: If the OpenWeatherMap server encounters an error
+            OpenWeatherMapError: For any other API errors
         """
         params = {
             "lat": lat,
@@ -111,9 +171,12 @@ class OpenWeatherMapService:
         if lang:
             params["lang"] = lang
 
-        response = await self.client_v3.get("onecall", params=params)
-        response.raise_for_status()
-        return OneCallResponse(**response.json())
+        try:
+            response = await self.client_v3.get("onecall", params=params)
+            response.raise_for_status()
+            return OneCallResponse(**response.json())
+        except HTTPStatusError as e:
+            self._handle_http_error(e)
 
     async def get_timemachine_data(
         self,
@@ -139,7 +202,12 @@ class OpenWeatherMapService:
             TimeMachineResponse with historical/future weather data
 
         Raises:
-            httpx.HTTPStatusError: If the API request fails
+            InvalidAPIKeyError: If the API key is invalid or unauthorized
+            LocationNotFoundError: If the coordinates are not found
+            BadRequestError: If the request parameters are invalid
+            RateLimitError: If the API rate limit is exceeded
+            ServerError: If the OpenWeatherMap server encounters an error
+            OpenWeatherMapError: For any other API errors
         """
         params = {
             "lat": lat,
@@ -152,9 +220,12 @@ class OpenWeatherMapService:
         if lang:
             params["lang"] = lang
 
-        response = await self.client_v3.get("onecall/timemachine", params=params)
-        response.raise_for_status()
-        return TimeMachineResponse(**response.json())
+        try:
+            response = await self.client_v3.get("onecall/timemachine", params=params)
+            response.raise_for_status()
+            return TimeMachineResponse(**response.json())
+        except HTTPStatusError as e:
+            self._handle_http_error(e)
 
     async def close(self) -> None:
         """Close the HTTP clients. Call this when done using the service."""
