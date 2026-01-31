@@ -11,6 +11,18 @@ from .flask_app import app, db, ChatSession
 from .chat_service import ChatService
 
 chat_service = ChatService()
+gemini = Gemini()
+
+_telegram_app = None
+
+async def get_telegram_app():
+    global _telegram_app
+
+    if _telegram_app is None:
+        _telegram_app = ApplicationBuilder().token(getenv('TELEGRAM_BOT_TOKEN')).build()
+
+    return _telegram_app
+
 
 
 @app.get('/')
@@ -22,8 +34,7 @@ def hello_world():
 async def webhook():
     chat_id = None
 
-    telegram_app = ApplicationBuilder().token(getenv('TELEGRAM_BOT_TOKEN')).build()
-    gemini = Gemini()
+    telegram_app = await get_telegram_app()
     enable_secure_webhook_token = getenv('ENABLE_SECURE_WEBHOOK_TOKEN') in ('True', None)
 
 
@@ -85,8 +96,8 @@ async def webhook():
             if update.message.caption:
                 prompt = update.message.caption
             print("Prompt is ", prompt)
-            chat = gemini.get_chat(history=history)
-            text = gemini.send_image(prompt, image, chat)
+            chat = await gemini.get_chat(history=history)
+            text = await gemini.send_image(prompt, image, chat)
 
             # Add user and model messages to the chat session
             chat_service.add_message(session.id, prompt, update.message.date, "user")
@@ -94,8 +105,8 @@ async def webhook():
         else:
 
             print("History: ", history.__str__())
-            chat = gemini.get_chat(history=history)
-            text = gemini.send_message(update.message.text, chat)
+            chat = await gemini.get_chat(history=history)
+            text = await gemini.send_message(update.message.text, chat)
             
             # Add user and model messages to the chat session
             chat_service.add_message(session.id, update.message.text, update.message.date, "user")
