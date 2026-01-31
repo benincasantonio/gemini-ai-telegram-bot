@@ -1,3 +1,4 @@
+from dotenv import load_dotenv
 from flask import request
 from .gemini import Gemini
 from md2tgmd import escape
@@ -9,6 +10,8 @@ from PIL import Image
 from .enums import TelegramBotCommands
 from .flask_app import app, db, ChatSession
 from .chat_service import ChatService
+
+load_dotenv()
 
 chat_service = ChatService()
 gemini = None

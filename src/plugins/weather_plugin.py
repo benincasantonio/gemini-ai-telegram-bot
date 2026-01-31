@@ -1,12 +1,9 @@
 from google.genai.types import FunctionDeclaration, Tool, Schema, Type
-from dotenv import load_dotenv
 from os import getenv
 from datetime import datetime
 
 from src.models.weather_models import CurrentWeatherResponse, TimeMachineResponse
 from src.services.open_weather_map_service import OpenWeatherMapService
-# TODO: Move this to a better place
-load_dotenv()
 
 class WeatherPlugin: 
     def __init__(self):
@@ -18,15 +15,18 @@ class WeatherPlugin:
             properties={
                 "city": {
                     "type": Type.STRING,
-                    "description": "The city to get the weather for."
+                    "description": "The city to get the weather for.",
+                    "required": True
                 },
                 "latitude": {
                     "type": Type.NUMBER,
-                    "description": "The latitude of the location to get the weather for."
+                    "description": "The latitude of the location to get the weather for.",
+                    "required": True
                 },
                 "longitude": {
                     "type": Type.NUMBER,
-                    "description": "The longitude of the location to get the weather for."
+                    "description": "The longitude of the location to get the weather for.",
+                    "required": True
                 },
                 "date_time": {
                     "type": Type.INTEGER,
