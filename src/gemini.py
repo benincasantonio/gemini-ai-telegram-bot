@@ -43,7 +43,7 @@ class Gemini:
             response = await chat.send_message(prompt)
             return response.text
 
-        function_response = self.__plugin_manager.get_function_response(function_call, chat)
+        function_response = await self.__plugin_manager.get_function_response(function_call, chat)
 
         print("Response: " + function_response.__str__())
 

@@ -1,6 +1,6 @@
 from .plugins.weather_plugin import WeatherPlugin
 from .plugins.date_time_plugin import DateTimePlugin
-from google.genai.chats import Chat
+from google.genai.chats import AsyncChat
 
 from google.genai.types import PartDict, FunctionResponseDict, FunctionCall, Part
 
@@ -23,12 +23,15 @@ class PluginManager:
 
         }
 
-    def get_function_response(self, function_call: FunctionCall, chat: Chat):
+    async def get_function_response(self, function_call: FunctionCall, chat: AsyncChat) -> PartDict | FunctionResponseDict | None:
         function_declarations = self.get_function_declarations()
 
         if function_call.name in function_declarations:
             args = {key: value for key, value in function_call.args.items()}
-            result = function_declarations[function_call.name](**args)
+            if callable(getattr(function_declarations[function_call.name], "__await__", None)):
+                result = await function_declarations[function_call.name](**args)
+            else:
+                result = function_declarations[function_call.name](**args)
 
             function_response_part = Part.from_function_response(
                 name=function_call.name,
@@ -37,7 +40,7 @@ class PluginManager:
                 }
             )
 
-            function_response = chat.send_message(
+            function_response = await chat.send_message(
                 message=function_response_part
             )
 

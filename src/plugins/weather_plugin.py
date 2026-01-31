@@ -54,8 +54,11 @@ class WeatherPlugin:
         )
     
 
-    async def get_weather(self, city: str, latitude: float, longitude: float, date_time: int = int(datetime.now().timestamp()), unit: str = 'metric') -> dict:
+    async def get_weather(self, city: str, latitude: float, longitude: float, date_time: int = None, unit: str = 'metric') -> dict:
 
+        if(date_time is None):
+            date_time = int(datetime.now().timestamp())
+        
         print("Getting weather for city: ", city, " at date time: ", date_time, " with unit: ", unit)
         parsed_date = datetime.fromtimestamp(date_time)
 
