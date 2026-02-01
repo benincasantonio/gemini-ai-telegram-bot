@@ -77,7 +77,7 @@ class WeatherPlugin:
                     "type": Type.NUMBER,
                     "description": "The longitude of the location to get the forecast for.",
                 },
-                datetime: {
+                "datetime": {
                     "type": Type.STRING,
                     "description": "The date and time for the forecast in ISO 8601 format (e.g., '2023-10-01T15:00:00Z').",
                 },
