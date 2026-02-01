@@ -26,8 +26,8 @@ class PluginManager:
     def get_function_declarations(self):
         return {
             "get_date_time": self.__date_time_plugin.get_date_time,
-            "get_weather": self.__weather_plugin.get_weather
-
+            "get_current_weather": self.__weather_plugin.get_current_weather,
+            "get_forecast_weather": self.__weather_plugin.get_forecast_weather
         }
 
     async def get_function_response(self, function_call: FunctionCall, chat: AsyncChat) -> PartDict | FunctionResponseDict | None:

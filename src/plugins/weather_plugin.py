@@ -1,7 +1,7 @@
 from typing import Optional
 from google.genai.types import FunctionDeclaration, Tool, Schema, Type
 from os import getenv
-from datetime import datetime
+from datetime import datetime as dt
 
 from ..models.weather_models import CurrentWeatherResponse, TimeMachineResponse
 from ..services.open_weather_map_service import OpenWeatherMapService
@@ -191,10 +191,10 @@ class WeatherPlugin:
         """
 
         try:
-            if not datetime: 
-                datetime = int(datetime.now().timestamp())
-
-            datetime_unix = int(datetime.fromisoformat(datetime).timestamp()) 
+            if not datetime:
+                datetime_unix = int(dt.now().timestamp())
+            else:
+                datetime_unix = int(dt.fromisoformat(datetime).timestamp())
             forecast: TimeMachineResponse = (
                 await self.openweathermap_service.get_timemachine_data(
                     latitude, longitude, dt=datetime_unix, units=unit
@@ -204,7 +204,7 @@ class WeatherPlugin:
                 "success": True,
                 "forecast": [
                     {
-                        "datetime": datetime.fromtimestamp(entry.dt).isoformat(),
+                        "datetime": dt.fromtimestamp(entry.dt).isoformat(),
                         "temperature": entry.temp,
                         "feels_like": entry.feels_like,
                         "humidity": entry.humidity,
