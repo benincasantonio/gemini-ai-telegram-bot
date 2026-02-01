@@ -177,22 +177,27 @@ class WeatherPlugin:
             return {"success": False, "error": f"Unexpected error: {str(e)}"}
 
     async def get_forecast_weather(
-        self, latitude: float, longitude: float, unit: str = "metric"
+        self, latitude: float, longitude: float, datetime: Optional[str] = None, unit: str = "metric"
     ) -> dict:
         """Get forecast weather data for a location.
 
         Args:
             latitude: Latitude for forecast weather
             longitude: Longitude for forecast weather
+            datetime: The date and time for the forecast in ISO 8601 format (e.g., '2023-10-01T15:00:00Z').
             unit: Temperature unit (standard/metric/imperial)
         Returns:
             Dict with forecast weather data or error message
         """
 
         try:
+            if not datetime: 
+                datetime = int(datetime.now().timestamp())
+
+            datetime_unix = int(datetime.fromisoformat(datetime).timestamp()) 
             forecast: TimeMachineResponse = (
                 await self.openweathermap_service.get_timemachine_data(
-                    latitude, longitude, units=unit
+                    latitude, longitude, dt=datetime_unix, units=unit
                 )
             )
             return {
