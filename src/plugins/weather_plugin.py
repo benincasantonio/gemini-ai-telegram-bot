@@ -14,6 +14,7 @@ from ..exceptions.weather_exceptions import (
     OpenWeatherMapError,
 )
 
+
 class WeatherPlugin:
     """Weather plugin for getting current and historical weather data.
 
@@ -25,7 +26,7 @@ class WeatherPlugin:
     """
 
     def __init__(self):
-        api_key = getenv('OWM_API_KEY')
+        api_key = getenv("OWM_API_KEY")
         if not api_key:
             raise ValueError(
                 "OWM_API_KEY environment variable is not set or is empty. "
@@ -39,9 +40,11 @@ class WeatherPlugin:
             raise ValueError(
                 f"Failed to initialize OpenWeatherMap service: {str(e)}"
             ) from e
-        self.name: str = "get_weather"
-        self.description: str = "Get the weather of a city at a particular date and time. If the date is today, the current weather will be returned. Otherwise, the weather at the specified date and time will be returned. If the user does not specify a date and time, the current date and time will be used. If the user types a date like 'tomorrow' or 'in 2 days', you should convert it to the appropriate date. If the user does not specify a unit, the temperature will be returned in Celsius. If the user specifies a unit, the temperature will be returned in that unit."
-        self.parameters = Schema(
+        self.get_current_weather_function_name: str = "get_current_weather"
+        self.get_current_weather_description: str = (
+            "Fetches the current weather conditions for a specified city, including temperature, humidity, wind speed, atmospheric pressure, and weather description. Temperature units default to Celsius but can be specified as Fahrenheit or Kelvin."
+        )
+        self.get_current_weather_parameters = Schema(
             type=Type.OBJECT,
             required=["city"],
             properties={
@@ -49,148 +52,169 @@ class WeatherPlugin:
                     "type": Type.STRING,
                     "description": "The city to get the weather for.",
                 },
+                "unit": {
+                    "type": Type.STRING,
+                    "description": "The unit of temperature. Should be one of 'standard' (Kelvin), 'metric' (Celsius), or 'imperial' (Fahrenheit).",
+                    "enum": ["standard", "metric", "imperial"],
+                    "default": "metric",
+                },
+            },
+        )
+
+        self.get_forecast_weather_function_name: str = "get_forecast_weather"
+        self.get_forecast_weather_description: str = (
+            "Fetches the historical weather forecast for a specified location (latitude and longitude) and time range. Returns temperature, humidity, wind speed, atmospheric pressure, and weather description for each time point."
+        )
+        self.get_forecast_weather_parameters = Schema(
+            type=Type.OBJECT,
+            required=["latitude", "longitude"],
+            properties={
                 "latitude": {
                     "type": Type.NUMBER,
-                    "description": "The latitude of the location to get the weather for.",
+                    "description": "The latitude of the location to get the forecast for.",
                 },
                 "longitude": {
                     "type": Type.NUMBER,
-                    "description": "The longitude of the location to get the weather for.",
+                    "description": "The longitude of the location to get the forecast for.",
                 },
-                "date_time": {
-                    "type": Type.INTEGER,
-                    "description": "The datetime timestamp for the weather in Unix format."
+                datetime: {
+                    "type": Type.STRING,
+                    "description": "The date and time for the forecast in ISO 8601 format (e.g., '2023-10-01T15:00:00Z').",
                 },
                 "unit": {
                     "type": Type.STRING,
                     "description": "The unit of temperature. Should be one of 'standard' (Kelvin), 'metric' (Celsius), or 'imperial' (Fahrenheit).",
                     "enum": ["standard", "metric", "imperial"],
-                    "default": "metric"
-                }
-            }
+                    "default": "metric",
+                },
+            },
         )
 
-    def function_declaration(self):
+    def get_current_weather_function_declaration(self):
         return FunctionDeclaration(
-            name=self.name,
-            description=self.description,
-            parameters=self.parameters,
+            name=self.get_current_weather_function_name,
+            description=self.get_current_weather_description,
+            parameters=self.get_current_weather_parameters,
         )
-    
+
+    def get_forecast_weather_function_declaration(self):
+        return FunctionDeclaration(
+            name=self.get_forecast_weather_function_name,
+            description=self.get_forecast_weather_description,
+            parameters=self.get_forecast_weather_parameters,
+        )
+
     def get_tool(self) -> Tool:
         return Tool(
-            function_declarations=[self.function_declaration()]
+            function_declarations=[
+                self.get_current_weather_function_declaration(),
+                self.get_forecast_weather_function_declaration(),
+            ]
         )
-    
 
-    async def get_weather(self, city: str, latitude: Optional[float], longitude: Optional[float], date_time: int = None, unit: str = 'metric') -> dict:
+    async def get_current_weather(self, city: str, unit: str = "metric") -> dict:
         """Get weather data for a location.
 
         Args:
             city: City name for current weather
-            latitude: Latitude for historical/forecast weather
-            longitude: Longitude for historical/forecast weather
-            date_time: Unix timestamp (defaults to current time)
             unit: Temperature unit (standard/metric/imperial)
 
         Returns:
             Dict with weather data or error message
         """
-        if date_time is None:
-            date_time = int(datetime.now().timestamp())
-
-        print("Getting weather for city: ", city, " at date time: ", date_time, " with unit: ", unit)
 
         try:
-            parsed_date = datetime.fromtimestamp(date_time)
-            print("Parsed date: ", parsed_date)
-
-            weather = None
 
             # Determine if we need current weather or historical/forecast
-            if parsed_date.date() == datetime.now().date():
-                weather = await self.openweathermap_service.get_current_weather(city, units=unit)
-            else:
-                weather = await self.openweathermap_service.get_timemachine_data(
-                    latitude, longitude, dt=int(parsed_date.timestamp()), units=unit
-                )
+            weather = await self.openweathermap_service.get_current_weather(
+                city, units=unit
+            )
 
-            # Format response based on weather type
-            if isinstance(weather, CurrentWeatherResponse):
-                return {
-                    "success": True,
-                    "description": weather.weather[0].description,
-                    "temperature": weather.main.temp,
-                    "feels_like": weather.main.feels_like,
-                    "humidity": weather.main.humidity,
-                    "wind_speed": weather.wind.speed,
-                    "pressure": weather.main.pressure,
-                    "conditions": weather.weather[0].main if weather.weather else "",
-                }
-            elif isinstance(weather, TimeMachineResponse):
-                if not weather.data:
-                    return {
-                        "success": False,
-                        "error": "No weather data available for the specified time."
-                    }
-
-                hourly_weather = weather.data[0]
-                return {
-                    "success": True,
-                    "description": hourly_weather.weather[0].description if hourly_weather.weather else "",
-                    "temperature": hourly_weather.temp,
-                    "feels_like": hourly_weather.feels_like,
-                    "humidity": hourly_weather.humidity,
-                    "wind_speed": hourly_weather.wind_speed,
-                    "pressure": hourly_weather.pressure,
-                }
-            else:
-                return {
-                    "success": False,
-                    "error": "Unexpected weather response type received."
-                }
+            return {
+                "success": True,
+                "description": weather.weather[0].description,
+                "temperature": weather.main.temp,
+                "feels_like": weather.main.feels_like,
+                "humidity": weather.main.humidity,
+                "wind_speed": weather.wind.speed,
+                "pressure": weather.main.pressure,
+                "conditions": weather.weather[0].main if weather.weather else "",
+            }
 
         except InvalidAPIKeyError as e:
             return {
                 "success": False,
-                "error": f"API key error: {e.message}. Please check your OpenWeatherMap API key configuration."
+                "error": f"API key error: {e.message}. Please check your OpenWeatherMap API key configuration.",
             }
         except LocationNotFoundError as e:
             return {
                 "success": False,
-                "error": f"Location not found: {e.message}. Please check the city name or coordinates."
+                "error": f"Location not found: {e.message}. Please check the city name or coordinates.",
             }
         except BadRequestError as e:
-            params_info = f" (parameters: {', '.join(e.parameters)})" if e.parameters else ""
+            params_info = (
+                f" (parameters: {', '.join(e.parameters)})" if e.parameters else ""
+            )
             return {
                 "success": False,
-                "error": f"Invalid request: {e.message}{params_info}"
+                "error": f"Invalid request: {e.message}{params_info}",
             }
         except RateLimitError as e:
             return {
                 "success": False,
-                "error": f"Rate limit exceeded: {e.message}. Please try again later."
+                "error": f"Rate limit exceeded: {e.message}. Please try again later.",
             }
         except ServerError as e:
             return {
                 "success": False,
-                "error": f"Weather service error: {e.message}. Please try again later."
+                "error": f"Weather service error: {e.message}. Please try again later.",
             }
         except OpenWeatherMapError as e:
-            return {
-                "success": False,
-                "error": f"Weather API error: {e.message}"
-            }
+            return {"success": False, "error": f"Weather API error: {e.message}"}
         except ValueError as e:
-            return {
-                "success": False,
-                "error": f"Invalid timestamp: {str(e)}"
-            }
+            return {"success": False, "error": f"Invalid timestamp: {str(e)}"}
         except Exception as e:
+            return {"success": False, "error": f"Unexpected error: {str(e)}"}
+
+    async def get_forecast_weather(
+        self, latitude: float, longitude: float, unit: str = "metric"
+    ) -> dict:
+        """Get forecast weather data for a location.
+
+        Args:
+            latitude: Latitude for forecast weather
+            longitude: Longitude for forecast weather
+            unit: Temperature unit (standard/metric/imperial)
+        Returns:
+            Dict with forecast weather data or error message
+        """
+
+        try:
+            forecast: TimeMachineResponse = (
+                await self.openweathermap_service.get_timemachine_data(
+                    latitude, longitude, units=unit
+                )
+            )
             return {
-                "success": False,
-                "error": f"Unexpected error: {str(e)}"
+                "success": True,
+                "forecast": [
+                    {
+                        "datetime": datetime.fromtimestamp(entry.dt).isoformat(),
+                        "temperature": entry.temp,
+                        "feels_like": entry.feels_like,
+                        "humidity": entry.humidity,
+                        "wind_speed": entry.wind_speed,
+                        "pressure": entry.pressure,
+                        "description": entry.weather[0].description,
+                        "conditions": entry.weather[0].main if entry.weather else "",
+                    }
+                    for entry in forecast.data
+                ],
             }
+        except OpenWeatherMapError as e:
+            return {"success": False, "error": f"Weather API error: {e.message}"}
+        except Exception as e:
+            return {"success": False, "error": f"Unexpected error: {str(e)}"}
 
     async def close(self) -> None:
         """Close the OpenWeatherMap service and cleanup resources.
@@ -204,6 +228,6 @@ class WeatherPlugin:
         """Async context manager entry."""
         return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
+    async def __aexit__(self) -> None:
         """Async context manager exit. Ensures cleanup of resources."""
         await self.close()
