@@ -1,3 +1,4 @@
+from typing import Optional
 from google.genai.types import FunctionDeclaration, Tool, Schema, Type
 from os import getenv
 from datetime import datetime
@@ -82,7 +83,7 @@ class WeatherPlugin:
         )
     
 
-    async def get_weather(self, city: str, latitude: float, longitude: float, date_time: int = None, unit: str = 'metric') -> dict:
+    async def get_weather(self, city: str, latitude: Optional[float], longitude: Optional[float], date_time: int = None, unit: str = 'metric') -> dict:
         """Get weather data for a location.
 
         Args:
